@@ -1,0 +1,97 @@
+import { getEnvSafely } from './config'
+
+// General
+const VERCEL_ENVIRONMENT = getEnvSafely(process.env.REACT_APP_VERCEL_ENVIRONMENT, 'REACT_APP_VERCEL_ENVIRONMENT')
+const EMPTY_VALUE = getEnvSafely(process.env.REACT_APP_EMPTY_VALUE, 'REACT_APP_EMPTY_VALUE')
+const API_URL = getEnvSafely(process.env.REACT_APP_API_URL, 'REACT_APP_API_URL')
+
+// Sentry
+const SENTRY_DSN = getEnvSafely(process.env.REACT_APP_SENTRY_DSN, 'REACT_APP_SENTRY_DSN')
+
+// Socials
+const Discord_URL = getEnvSafely(process.env.REACT_APP_Discord_URL, 'REACT_APP_Discord_URL')
+const Twitter_URL = getEnvSafely(process.env.REACT_APP_Twitter_URL, 'REACT_APP_Twitter_URL')
+const DOCS_URL = getEnvSafely(process.env.REACT_APP_DOCS_URL, 'REACT_APP_DOCS_URL')
+const MEDIUM_URL = getEnvSafely(process.env.REACT_APP_MEDIUM_URL, 'REACT_APP_MEDIUM_URL')
+const GITHUB_URL = getEnvSafely(process.env.REACT_APP_GITHUB_URL, 'REACT_APP_GITHUB_URL')
+const CAMPAIGN_URL = getEnvSafely(process.env.REACT_APP_CAMPAIGN_URL, 'REACT_APP_CAMPAIGN_URL')
+
+// Entrypoint
+const IS_MAINNET = getEnvSafely(process.env.REACT_APP_IS_MAINNET, 'REACT_APP_IS_MAINNET')
+const RPC_URL = getEnvSafely(process.env.REACT_APP_RPC_URL, 'REACT_APP_RPC_URL')
+const TEST_RPC_URL = getEnvSafely(process.env.REACT_APP_TEST_RPC_URL, 'REACT_APP_TEST_RPC_URL')
+
+// Tokens
+const USDC_TOKEN_ADDRESS = getEnvSafely(process.env.REACT_APP_USDC_TOKEN_ADDRESS, 'REACT_APP_USDC_TOKEN_ADDRESS')
+const USDC_USDT_TOKEN_ADDRESS = getEnvSafely(process.env.REACT_APP_USDC_USDT_TOKEN_ADDRESS, 'REACT_APP_USDC_USDT_TOKEN_ADDRESS')
+const BTC_TOKEN_ADDRESS = getEnvSafely(process.env.REACT_APP_BTC_TOKEN_ADDRESS, 'REACT_APP_BTC_TOKEN_ADDRESS')
+const ETH_TOKEN_ADDRESS = getEnvSafely(process.env.REACT_APP_ETH_TOKEN_ADDRESS, 'REACT_APP_ETH_TOKEN_ADDRESS')
+const SOL_TOKEN_ADDRESS = getEnvSafely(process.env.REACT_APP_SOL_TOKEN_ADDRESS, 'REACT_APP_SOL_TOKEN_ADDRESS')
+const GMI_TOKEN_ADDRESS = getEnvSafely(process.env.REACT_APP_GMI_TOKEN_ADDRESS, 'REACT_APP_GMI_TOKEN_ADDRESS')
+
+// Lend
+const LENDING_POOL_ADDRESS = getEnvSafely(process.env.REACT_APP_LENDING_POOL_ADDRESS, 'REACT_APP_LENDING_POOL_ADDRESS')
+
+// Oracle
+const ORACLE_ADDRESS = getEnvSafely(process.env.REACT_APP_ORACLE_ADDRESS, 'REACT_APP_ORACLE_ADDRESS')
+
+// GM Interest
+const GM_INTERESTRATE_ADDRESS = getEnvSafely(process.env.REACT_APP_GM_INTERESTRATE_ADDRESS, 'REACT_APP_GM_INTERESTRATE_ADDRESS')
+
+// GM Points
+const GM_POINTS_CONTRACT_ADDRESS = getEnvSafely(process.env.REACT_APP_GM_POINTS_CONTRACT_ADDRESS, 'REACT_APP_GM_POINTS_CONTRACT_ADDRESS')
+
+// GM Incentives
+const GM_INCENTIVES_CONTRACT_ADDRESS = getEnvSafely(process.env.REACT_APP_GM_INCENTIVES_CONTRACT_ADDRESS, 'REACT_APP_GM_INCENTIVES_CONTRACT_ADDRESS')
+const REWARDS_ADDRESS = getEnvSafely(process.env.REACT_APP_REWARDS_ADDRESS, 'REACT_APP_REWARDS_ADDRESS')
+
+
+const env = {
+
+  // General
+  VERCEL_ENVIRONMENT,
+  EMPTY_VALUE,
+  API_URL,
+
+  // Sentry
+  SENTRY_DSN,
+
+  // Socails
+  Discord_URL,
+  Twitter_URL,
+  DOCS_URL,
+  MEDIUM_URL,
+  GITHUB_URL,
+  CAMPAIGN_URL,
+
+  // Entrypoint
+  IS_MAINNET,
+  RPC_URL,
+  TEST_RPC_URL,
+
+  // Tokens
+  USDC_TOKEN_ADDRESS,
+  USDC_USDT_TOKEN_ADDRESS,
+  BTC_TOKEN_ADDRESS,
+  ETH_TOKEN_ADDRESS,
+  SOL_TOKEN_ADDRESS,
+  GMI_TOKEN_ADDRESS,
+
+  // Lend
+  LENDING_POOL_ADDRESS,
+
+  // Oracle
+  ORACLE_ADDRESS,
+
+  // GM Interest
+  GM_INTERESTRATE_ADDRESS,
+
+  // GM Points
+  GM_POINTS_CONTRACT_ADDRESS,
+
+  // GM Incentives
+  GM_INCENTIVES_CONTRACT_ADDRESS,
+  REWARDS_ADDRESS
+}
+
+export default env
