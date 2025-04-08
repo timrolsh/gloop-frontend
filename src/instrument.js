@@ -1,9 +1,14 @@
-import { useEffect } from "react"
-import * as Sentry from "@sentry/react"
-import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from "react-router-dom"
-import env from './env'
+import {useEffect} from "react";
+import * as Sentry from "@sentry/react";
+import {
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType
+} from "react-router-dom";
+import env from "./env";
 
-if (process.env.NODE_ENV !== 'development')
+if (process.env.NODE_ENV !== "development")
   Sentry.init({
     dsn: env.SENTRY_DSN,
     integrations: [
@@ -14,13 +19,13 @@ if (process.env.NODE_ENV !== 'development')
         useLocation,
         useNavigationType,
         createRoutesFromChildren,
-        matchRoutes,
+        matchRoutes
       }),
       Sentry.replayIntegration({
         // Additional Replay configuration goes in here, for example:
         blockAllMedia: true,
-        maskAllText: false,
-      }),
+        maskAllText: false
+      })
     ],
 
     // Set tracesSampleRate to 1.0 to capture 100%
@@ -33,5 +38,5 @@ if (process.env.NODE_ENV !== 'development')
     // Capture Replay for 10% of all sessions,
     // plus for 100% of sessions with an error
     replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
-  })
+    replaysOnErrorSampleRate: 1.0
+  });
