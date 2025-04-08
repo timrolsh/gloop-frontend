@@ -16,16 +16,19 @@ import {ProtectedRoute} from "./ProtectedRoute";
 import ScrollToTop from "./ScrollToTop";
 import {WagmiProvider} from "wagmi";
 import {QueryClientProvider} from "@tanstack/react-query";
-import {RainbowKitProvider} from "@rainbow-me/rainbowkit";
+import {darkTheme, RainbowKitProvider} from "@rainbow-me/rainbowkit";
 import {config, queryClient} from "./providers/WalletContextProvider";
 import {gloopTheme} from "./components/wallet/WalletButtonTheme";
-import { arbitrum } from "viem/chains";
+import {arbitrum} from "viem/chains";
 
 const App = () => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={gloopTheme} initialChain={arbitrum}>
+        <RainbowKitProvider
+          theme={gloopTheme}
+          initialChain={arbitrum}
+        >
           <BrowserRouter>
             <ScrollToTop />
             <Toast />
