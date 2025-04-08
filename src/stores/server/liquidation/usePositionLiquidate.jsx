@@ -3,6 +3,7 @@ import {useAccount} from "wagmi";
 
 import {toastSuccess} from "~/utils/toast";
 import {liquidate} from "~/web3/liquidation";
+import {parseUnits} from "viem";
 import {queries} from "~/consts/queries";
 import {approve, checkAllowance} from "~/web3/LendWeb3";
 import useUserStore from "~/stores/client/user";
