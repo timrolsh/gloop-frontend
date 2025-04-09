@@ -7,6 +7,8 @@ import useGetTokensList from '~/stores/server/core/useGetTokensList'
 import useGetReserveFactorMantissa from '~/stores/server/core/useGetReserveFactorMantissa'
 import useGetGloopStakersYieldFactor from '~/stores/server/core/useGetGloopStakersYieldFactor'
 import useUserStore from '~/stores/client/user'
+import AuthenticatedSection from '../AuthenticatedSection'
+import ConnectWalletButton from '../wallet/ConnectWalletButton'
 
 export default function LendOverallUSDCMarket() {
 
