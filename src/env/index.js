@@ -18,7 +18,6 @@ const CAMPAIGN_URL = getEnvSafely(process.env.REACT_APP_CAMPAIGN_URL, 'REACT_APP
 
 // Entrypoint
 const IS_MAINNET = getEnvSafely(process.env.REACT_APP_IS_MAINNET, 'REACT_APP_IS_MAINNET')
-const RPC_URL = getEnvSafely(process.env.REACT_APP_RPC_URL, 'REACT_APP_RPC_URL')
 const TEST_RPC_URL = getEnvSafely(process.env.REACT_APP_TEST_RPC_URL, 'REACT_APP_TEST_RPC_URL')
 
 // Tokens
@@ -66,7 +65,6 @@ const env = {
 
   // Entrypoint
   IS_MAINNET,
-  RPC_URL,
   TEST_RPC_URL,
 
   // Tokens

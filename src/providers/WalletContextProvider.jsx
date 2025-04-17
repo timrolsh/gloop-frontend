@@ -52,7 +52,7 @@ export const config = createConfig({
   chains,
   transports: {
     [bscTestnet.id]: http(env.TEST_RPC_URL),
-    [arbitrum.id]: http(env.RPC_URL)
+    [arbitrum.id]: http(arbitrum.rpcUrls.default.http[0])
   }
 });
 
