@@ -176,7 +176,7 @@ const getBorrowTokenAPY = async (token) => {
     const apy = await readContract(config, {
       abi: GMInterestRateModel.abi,
       address: env.GM_INTERESTRATE_ADDRESS,
-      functionName: "getCurrentBorrowAPY",
+      functionName: "getBorrowRate",
       args: [availableLiquidity, totalBorrows]
     });
 
