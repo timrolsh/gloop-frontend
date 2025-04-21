@@ -1,19 +1,19 @@
-import React from "react"
-import { Table } from "react-bootstrap"
+import React from "react";
+import {Table} from "react-bootstrap";
 
-import { truncateString } from "~/utils/truncateString"
-import useScreenWidth from "~/hooks/useScreenWidth"
+import {truncateString} from "~/utils/truncateString";
+import useScreenWidth from "~/hooks/useScreenWidth";
 
-import Skeleton from "../Skeleton"
-import RewardTokensTableRow from './RewardTokensTableRow'
+import Skeleton from "../Skeleton";
+import RewardTokensTableRow from "./RewardTokensTableRow";
 
-const RewardTokensTable = ({ rewardsList, totalUnclaimedRewards, isLoading = true }) => {
+const RewardTokensTable = ({rewardsList, totalUnclaimedRewards, isLoading = true}) => {
   // Get the current screen width
-  const screenWidth = useScreenWidth()
+  const screenWidth = useScreenWidth();
 
   return (
     <>
-      <Table borderless className="gmi_basket_table" style={{ marginTop: 20 }}>
+      <Table borderless className="gmi_basket_table" style={{marginTop: 20}}>
         <thead>
           <tr>
             <th className="color-gray font-14 bold-300">Reward token</th>
@@ -31,36 +31,28 @@ const RewardTokensTable = ({ rewardsList, totalUnclaimedRewards, isLoading = tru
           {isLoading ? (
             <tr>
               <td>
-                <Skeleton
-                  loading={isLoading}
-                  height="40px"
-                  width="200px"
-                ></Skeleton>
+                <Skeleton loading={isLoading} height="40px" width="200px"></Skeleton>
               </td>
               <td>
-                <Skeleton
-                  loading={isLoading}
-                  height="40px"
-                  width="100px"
-                ></Skeleton>
+                <Skeleton loading={isLoading} height="40px" width="100px"></Skeleton>
               </td>
               <td>
-                <Skeleton
-                  loading={isLoading}
-                  height="40px"
-                  width="100px"
-                ></Skeleton>
+                <Skeleton loading={isLoading} height="40px" width="100px"></Skeleton>
               </td>
             </tr>
           ) : (
             rewardsList?.map((tokenAddress, index) => (
-              <RewardTokensTableRow key={tokenAddress} tokenAddress={tokenAddress} totalUnclaimedReward={totalUnclaimedRewards[index]} />
+              <RewardTokensTableRow
+                key={tokenAddress}
+                tokenAddress={tokenAddress}
+                totalUnclaimedReward={totalUnclaimedRewards[index]}
+              />
             ))
           )}
         </tbody>
       </Table>
     </>
-  )
-}
+  );
+};
 
-export default RewardTokensTable
+export default RewardTokensTable;

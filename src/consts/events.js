@@ -1,4 +1,4 @@
 export const events = {
-  Unauthorized: 'unauthorized',
-  AddReferral: 'add_referral'
-}
+  Unauthorized: "unauthorized",
+  AddReferral: "add_referral"
+};

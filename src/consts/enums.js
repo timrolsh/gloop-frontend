@@ -1,4 +1,4 @@
 export const DATAMODES = {
-  BORROW: 'borrow',
-  PORTFOLIO: 'portfolio'
-}
+  BORROW: "borrow",
+  PORTFOLIO: "portfolio"
+};

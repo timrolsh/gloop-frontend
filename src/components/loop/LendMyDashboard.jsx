@@ -1,66 +1,56 @@
-import React, { useMemo } from "react"
-import { Row, Col, Button, Table } from "react-bootstrap"
+import React, {useMemo} from "react";
+import {Row, Col, Button, Table} from "react-bootstrap";
 
-import env from "~/env"
-import { truncateAmount } from "~/utils/ui"
-import useGetUserDetails from "~/stores/server/leaderboard/useGetUserDetails"
-import useGetAllUserRewards from "~/stores/server/incentives/useGetAllUserRewards"
+import env from "~/env";
+import {truncateAmount} from "~/utils/ui";
+import useGetUserDetails from "~/stores/server/leaderboard/useGetUserDetails";
+import useGetAllUserRewards from "~/stores/server/incentives/useGetAllUserRewards";
 
-import Skeleton from "../Skeleton"
-import useGetAPR from "~/stores/server/lend/useGetAPR"
-import useClaimRewards from "~/stores/server/core/useClaimRewards"
-import RewardTokensTable from "./RewardTokensTable"
-import useGetTokensList from '~/stores/server/core/useGetTokensList'
-import AsyncButton from '../AsyncButton'
-import { createBigNumber } from '~/utils/math'
+import Skeleton from "../Skeleton";
+import useGetAPR from "~/stores/server/lend/useGetAPR";
+import useClaimRewards from "~/stores/server/core/useClaimRewards";
+import RewardTokensTable from "./RewardTokensTable";
+import useGetTokensList from "~/stores/server/core/useGetTokensList";
+import AsyncButton from "../AsyncButton";
+import {createBigNumber} from "~/utils/math";
 
 const LendMyDashboard = () => {
-
-  const tokenListQuery = useGetTokensList({})
+  const tokenListQuery = useGetTokensList({});
 
   // Claim points
-  const { mutate: claimRewards, isPending: isClaimingPoints } = useClaimRewards()
+  const {mutate: claimRewards, isPending: isClaimingPoints} = useClaimRewards();
 
   // Fetch all user rewards data
-  const { data: allUserRewards, isLoading: isLoadingAllUserRewards } =
-    useGetAllUserRewards({})
+  const {data: allUserRewards, isLoading: isLoadingAllUserRewards} = useGetAllUserRewards({});
 
   // Destructure the arrays from the fetched data
-  const rewardsList = allUserRewards?.[0]
-  const unclaimedAmounts = allUserRewards?.[1]
-  const pendingAmounts = allUserRewards?.[2]
+  const rewardsList = allUserRewards?.[0];
+  const unclaimedAmounts = allUserRewards?.[1];
+  const pendingAmounts = allUserRewards?.[2];
 
   // Calculate total unclaimed rewards for each token
   const totalUnclaimedRewards = unclaimedAmounts?.map((amount, index) => {
-    return amount + pendingAmounts[index]
-  })
+    return amount + pendingAmounts[index];
+  });
 
   const totalSupplied = useMemo(() => {
+    if (!(tokenListQuery.data || []).length || tokenListQuery.isLoading) return env.EMPTY_VALUE;
 
-    if (!(tokenListQuery.data || []).length || tokenListQuery.isLoading)
-      return env.EMPTY_VALUE
-
-    return tokenListQuery.data.find(x => x.name === 'USDC')?.userPoolBalance
-
-  }, [tokenListQuery])
+    return tokenListQuery.data.find((x) => x.name === "USDC")?.userPoolBalance;
+  }, [tokenListQuery]);
 
   const totalClaimable = useMemo(() => {
-    let totalRewards = createBigNumber(0)
-    const totalUnclaimed = totalUnclaimedRewards || []
+    let totalRewards = createBigNumber(0);
+    const totalUnclaimed = totalUnclaimedRewards || [];
 
-    for (const unclaimed of totalUnclaimed)
-      totalRewards = totalRewards.plus(unclaimed)
+    for (const unclaimed of totalUnclaimed) totalRewards = totalRewards.plus(unclaimed);
 
-    return totalRewards.toString()
-
-  }, [totalUnclaimedRewards])
+    return totalRewards.toString();
+  }, [totalUnclaimedRewards]);
 
   const claimPointsButtonDisabledReason = useMemo(() => {
-
-    if (!totalClaimable || createBigNumber(totalClaimable).lte(0))
-      return 'No Rewards To Claim'
-
-  }, [totalClaimable])
+    if (!totalClaimable || createBigNumber(totalClaimable).lte(0)) return "No Rewards To Claim";
+  }, [totalClaimable]);
 
   return (
     <div className="my-4 bg-trans mx-auto overall-usdc-card">
@@ -70,11 +60,14 @@ const LendMyDashboard = () => {
 
       <Row className="overflow-x-auto">
         <Col sm={12} className="">
-          <Skeleton loading={isLoadingAllUserRewards.isLoading || tokenListQuery.isLoading} height="100px">
-            <div className="mobile-show" style={{ width: 'fit-content' }}>
+          <Skeleton
+            loading={isLoadingAllUserRewards.isLoading || tokenListQuery.isLoading}
+            height="100px"
+          >
+            <div className="mobile-show" style={{width: "fit-content"}}>
               <div
                 className="radius-8 bg-trans px-4 pt-4 pb-4 d-flex flex-column"
-                style={{ gap: "16px" }}
+                style={{gap: "16px"}}
               >
                 <div className="d-flex v-center space-between">
                   <div className="font-16 bold-300 color-gray">
@@ -90,7 +83,11 @@ const LendMyDashboard = () => {
                   </Skeleton>
                 </div>
 
-                <RewardTokensTable rewardsList={rewardsList} totalUnclaimedRewards={totalUnclaimedRewards} isLoading={isLoadingAllUserRewards} />
+                <RewardTokensTable
+                  rewardsList={rewardsList}
+                  totalUnclaimedRewards={totalUnclaimedRewards}
+                  isLoading={isLoadingAllUserRewards}
+                />
 
                 <AsyncButton
                   loading={isClaimingPoints}
@@ -104,14 +101,15 @@ const LendMyDashboard = () => {
             </div>
 
             <div className="desktop-show bg-trans1 radius-8 p-3 my-2">
-              <div className="d-flex space-between" style={{ gap: "16px" }}>
+              <div className="d-flex space-between" style={{gap: "16px"}}>
                 <div className="d-flex flex-column space-between flex-grow-1">
                   <div className="p-2">
-                    <span className="font-14 bold-300 color-gray">
-                      Total Supplied
-                    </span>
+                    <span className="font-14 bold-300 color-gray">Total Supplied</span>
                   </div>
-                  <Skeleton loading={tokenListQuery.isLoading || totalSupplied === env.EMPTY_VALUE} width='80px'>
+                  <Skeleton
+                    loading={tokenListQuery.isLoading || totalSupplied === env.EMPTY_VALUE}
+                    width="80px"
+                  >
                     <div className="font-20 bold-700 color-white px-2 pb-2">
                       {truncateAmount(totalSupplied || "", 2)}
                     </div>
@@ -133,13 +131,17 @@ const LendMyDashboard = () => {
                 </div>
               </div>
 
-              <RewardTokensTable rewardsList={rewardsList} totalUnclaimedRewards={totalUnclaimedRewards} isLoading={isLoadingAllUserRewards} />
+              <RewardTokensTable
+                rewardsList={rewardsList}
+                totalUnclaimedRewards={totalUnclaimedRewards}
+                isLoading={isLoadingAllUserRewards}
+              />
             </div>
           </Skeleton>
         </Col>
       </Row>
     </div>
-  )
-}
+  );
+};
 
-export default LendMyDashboard
+export default LendMyDashboard;

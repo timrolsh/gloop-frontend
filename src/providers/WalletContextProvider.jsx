@@ -25,7 +25,7 @@ import Endpoint from "~/plugins/endpoint";
 import env from "~/env";
 
 import "@rainbow-me/rainbowkit/styles.css";
-import {connectWhiteList} from "~/consts/whitelist";
+// import {connectWhiteList} from "~/consts/whitelist";
 
 export const connectors = connectorsForWallets(
   [
@@ -95,7 +95,7 @@ const WalletContextProvider = ({children}) => {
     verify: async ({message, signature}) => {
       // Disable whitelist check
       // const walletAddress = message.address;
-      
+
       // if (!connectWhiteList.includes(walletAddress)) {
       //   new Web3Exception(
       //     "Your wallet is not whiltelisted",
