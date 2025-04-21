@@ -93,16 +93,17 @@ const WalletContextProvider = ({children}) => {
       return message.prepareMessage();
     },
     verify: async ({message, signature}) => {
-      const walletAddress = message.address;
-
-      if (!connectWhiteList.includes(walletAddress)) {
-        new Web3Exception(
-          "Your wallet is not whiltelisted",
-          {walletAddress, connectWhiteList},
-          {sendToast: true}
-        );
-        return false;
-      }
+      // Disable whitelist check
+      // const walletAddress = message.address;
+      
+      // if (!connectWhiteList.includes(walletAddress)) {
+      //   new Web3Exception(
+      //     "Your wallet is not whiltelisted",
+      //     {walletAddress, connectWhiteList},
+      //     {sendToast: true}
+      //   );
+      //   return false;
+      // }
 
       const url = Endpoint.getUrl("user-login");
       const payload = {
