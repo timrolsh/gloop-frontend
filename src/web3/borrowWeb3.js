@@ -180,7 +180,11 @@ const getBorrowTokenAPY = async (token) => {
       args: [availableLiquidity, totalBorrows]
     });
 
-    return createBigNumber(formatEther(apy)).mul(100).toFixed(2);
+    const oneE18 = createBigNumber(parseEther("1"));
+    // 365.25 * 24 * 60 * 60 = 31557600
+    const secondsPerYear = createBigNumber("31557600");
+    const apr = createBigNumber(apy.toString()).mul(secondsPerYear).div(oneE18).mul(100);
+    return apr.toFixed(2);
   } catch (error) {
     throw new Web3Exception(`Getting ${token.name} Borrow APY Failed`, {token, error});
   }
