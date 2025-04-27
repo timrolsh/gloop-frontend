@@ -38,12 +38,12 @@ export default function Borrow({selectedTab}) {
     <div>
       <SidebarSocial />
       <section>
-        <Container className="mt-5 mb-3">
+        <Container className="mt-5 mb-3 px-md-3 px-0">
           <Row className="radius-8 bg-trans m-0 py-3 px-3 min-h-150">
             <Col sm={9} className="w-75-100">
               <div className="desktop-flex v-center">
                 <div className="my-3 mr-20">
-                  <img src={loop_img1_url} width={62} />
+                  <img src={loop_img1_url} width={62} alt="" />
                 </div>
                 <div className="color-white font-16 my-3">
                   Deposit GM tokens as collateral to borrow USDC. Use the USDC to buy and deposit
@@ -59,7 +59,7 @@ export default function Borrow({selectedTab}) {
                   className="gloop-btn-second btn font-16 radius-8 bg-trans-0 border-white color-white p-10-25 my-2"
                 >
                   <span className="mr-10">See Documentation</span>
-                  <img src={gmi_img2_url} width={12} />
+                  <img src={gmi_img2_url} width={12} alt="" />
                 </Link>
               </div>
             </Col>
@@ -67,9 +67,9 @@ export default function Borrow({selectedTab}) {
         </Container>
       </section>
       <section>
-        <Container className="loop-main-container">
+        <Container className="loop-main-container px-md-3 px-0">
           <Row>
-            <Col className="mx-auto" sm={9} xs={12}>
+            <Col lg={9} className="mx-auto px-0" xs={12}>
               <Row>
                 <Col sm={6} className="w-50-100 p-0">
                   <div
@@ -81,6 +81,7 @@ export default function Borrow({selectedTab}) {
                     <img
                       src={activeTab === "market" ? loop_market_tab_active : loop_market_tab}
                       width={24}
+                      alt=""
                     />
                     <span>Deposit/Borrow Markets</span>
                   </div>
@@ -97,6 +98,7 @@ export default function Borrow({selectedTab}) {
                         activeTab === "portfolio" ? loop_positions_tab_active : loop_positions_tab
                       }
                       width={24}
+                      alt=""
                     />
 
                     <div className="d-flex align-items-center gap-2">
@@ -112,7 +114,7 @@ export default function Borrow({selectedTab}) {
           </Row>
 
           <Row className="mt-4">
-            <Col sm={9} className="mx-auto radius-8 p-0">
+            <Col lg={9} className="mx-auto radius-8 p-0" xs={12}>
               {activeTab === "market" && <Markets />}
               {activeTab === "portfolio" ? (
                 <AuthenticatedSection height="700px">
