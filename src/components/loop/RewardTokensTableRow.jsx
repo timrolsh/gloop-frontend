@@ -49,7 +49,6 @@ const RewardTokensTableRow = ({tokenAddress, totalUnclaimedReward}) => {
     const formatedUnclaimedReward = formatEther(totalUnclaimedReward);
     return createBigNumber(formatedUnclaimedReward).mul(price).toString();
   }, [totalUnclaimedReward, oraclePriceFeedQuery, gloopPriceQuery, tokenAddress]);
-  console.log(tokenNameQuery);
 
   return (
     <tr key={tokenAddress}>
