@@ -80,7 +80,7 @@ export default function CollateralTokensTableRow({token, displayHr, onRowClick, 
           </Skeleton>
         </td>
         <td>
-          <Skeleton loading={supply.displayValue == env.EMPTY_VALUE}>
+          <Skeleton loading={supply.displayValue === env.EMPTY_VALUE}>
             <div className="d-flex flex-column" style={{gap: "4px"}}>
               <span className="color-white font-16 bold-600" title={supply.displayValue}>
                 {supply.displayValue}
@@ -95,7 +95,7 @@ export default function CollateralTokensTableRow({token, displayHr, onRowClick, 
         </td>
 
         <td>
-          <Skeleton loading={borrow.displayValue == env.EMPTY_VALUE}>
+          <Skeleton loading={borrow.displayValue === env.EMPTY_VALUE}>
             <div className="d-flex flex-column" style={{gap: "4px"}}>
               <span className="color-white font-16 bold-600" title={borrow.displayValue}>
                 {borrow.displayValue}
