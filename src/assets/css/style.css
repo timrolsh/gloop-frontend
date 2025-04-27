@@ -441,6 +441,10 @@ body {
   font-weight: bold;
 }
 
+.apy-rate {
+  white-space: nowrap;
+}
+
 .bg-black {
   background: black !important;
 }
