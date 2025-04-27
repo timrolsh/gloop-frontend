@@ -8,9 +8,9 @@ import erc20Abi from "~/consts/abis/MockERC20.json";
 import {Web3Exception} from "~/consts/exceptions";
 import {config} from "~/providers/WalletContextProvider";
 import {reopenToastLoading, toastDismiss, toastLoading} from "~/utils/toast";
-import {getBorrowTokenAPY} from "./borrowWeb3";
 import {getGloopStakersYieldFactor, getReserveFactorMantissa} from "./core";
 import {createBigNumber} from "~/utils/math";
+import {parseEther} from "viem"; // Import parseEther
 
 const approve = async (amount, token) => {
   let toastId = toastLoading("Please Approve");
@@ -85,19 +85,36 @@ const deposit = async (amount, token) => {
   }
 };
 
-const getSupplyAPY = async (token) => {
+const getSupplyAPY = async (token, rawBorrowRate) => {
   try {
     const reserveFactor = await getReserveFactorMantissa();
     const gloopStakersYieldFactor = await getGloopStakersYieldFactor();
-    const borrowApy = await getBorrowTokenAPY(token);
+    const oneE18 = createBigNumber(parseEther("1"));
 
-    return createBigNumber(borrowApy)
-      .mul(
-        createBigNumber("1e18")
-          .minus(gloopStakersYieldFactor.toString())
-          .plus(reserveFactor.toString())
-      )
-      .toString();
+    // Calculate the factor to subtract: (gloopStakersYieldFactor + reserveFactor) / 1e18
+    const reductionFactor = createBigNumber(gloopStakersYieldFactor.toString())
+      .plus(reserveFactor.toString())
+      .div(oneE18);
+
+    // Calculate the multiplier: 1 - reductionFactor = (1e18 - (gloopStakersYieldFactor + reserveFactor)) / 1e18
+    const multiplier = createBigNumber(1).minus(reductionFactor);
+
+    // Calculate raw supply rate: rawBorrowRate * multiplier
+    // Note: rawBorrowRate is already a BigInt/BigNumber from getBorrowTokenAPY
+    const rawSupplyRate = createBigNumber(rawBorrowRate.toString()).mul(multiplier);
+
+    // Convert raw supply rate to APY percentage string
+    // 365.25 * 24 * 60 * 60 = 31557600 (seconds per year)
+    const secondsPerYear = createBigNumber("31557600");
+    const supplyApy = rawSupplyRate
+      .mul(secondsPerYear)
+      // Convert rate to yearly decimal
+      .div(oneE18)
+      // Convert to percentage
+      .mul(100)
+      // Format to 2 decimal places
+      .toFixed(2);
+    return supplyApy; // Return the calculated APY string
   } catch (error) {
     throw new Web3Exception(`Getting ${token.name} Supply APY Failed`, {token, error});
   }

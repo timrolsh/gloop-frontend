@@ -1,4 +1,4 @@
-import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useQuery} from "@tanstack/react-query";
 import {formatEther, formatUnits, parseUnits, parseEther} from "viem";
 import {queries} from "~/consts/queries";
 
@@ -127,27 +127,45 @@ const useGetTokensList = ({enabled = true}) => {
       }
     } catch (error) {}
 
+    let rawBorrowRate = 0n; // Initialize rawBorrowRate
+
     if (token?.borrowable) {
       try {
         if (token.totalBorrows === env.EMPTY_VALUE || token.availableLiquidity === env.EMPTY_VALUE)
           throw new Error();
 
-        token.borrowApy = await getBorrowTokenAPY(token);
-      } catch (error) {}
+        // Get both raw rate and APY
+        const borrowData = await getBorrowTokenAPY(token);
+        token.borrowApy = borrowData.apy; // Store the APY string
+        rawBorrowRate = borrowData.rawRate; // Store the raw rate for supply calculation
+      } catch (error) {
+        // Handle or log error if needed
+        token.borrowApy = env.EMPTY_VALUE; // Set default on error
+      }
     }
 
     try {
       if (token.collateral) {
-        token.supplyApy = "0";
+        token.supplyApy = "0"; // Collateral assets don't earn supply APY in this model
       } else {
-        if (token.totalBorrows === env.EMPTY_VALUE || token.availableLiquidity === env.EMPTY_VALUE)
-          throw new Error();
+        // Ensure we have the necessary data, including the rawBorrowRate
+        if (
+          token.totalBorrows === env.EMPTY_VALUE ||
+          token.availableLiquidity === env.EMPTY_VALUE ||
+          rawBorrowRate === 0n // Check if rawBorrowRate was successfully fetched
+        ) {
+          throw new Error("Missing data for supply APY calculation");
+        }
 
-        const supplyApy = await getSupplyAPY(token);
-        const formattedSupplyApy = formatEther(supplyApy);
-        token.supplyApy = formattedSupplyApy;
+        // Pass the rawBorrowRate to getSupplyAPY
+        const supplyApy = await getSupplyAPY(token, rawBorrowRate);
+        // Store the returned APY string directly (no formatEther needed)
+        token.supplyApy = supplyApy;
       }
-    } catch (error) {}
+    } catch (error) {
+      // Handle or log error if needed
+      token.supplyApy = env.EMPTY_VALUE; // Set default on error
+    }
 
     try {
       const totalBorrows = parseUnits(token.totalBorrows, token.decimals);

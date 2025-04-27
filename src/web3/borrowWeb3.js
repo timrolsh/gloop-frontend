@@ -10,7 +10,7 @@ import GMInterestRateModel from "~/consts/abis/GMInterestRateModel.json";
 // images
 import {reopenToastLoading, toastDismiss, toastLoading} from "~/utils/toast";
 import {createBigNumber} from "~/utils/math";
-import {ContractFunctionExecutionError, formatEther, parseEther, parseUnits} from "viem";
+import {ContractFunctionExecutionError, parseEther, parseUnits} from "viem";
 
 const getTokenTotalBorrow = async (token) => {
   try {
@@ -144,36 +144,13 @@ const enableCollateral = async (token) => {
   }
 };
 
-const calculateInterestRate = (borrowRate) => {
-  const oneE18 = createBigNumber(parseEther("1"));
-
-  // Convert borrowRate to BigInt
-  const borrowRateBig = createBigNumber(borrowRate);
-
-  // Calculate interest rate
-  const numerator = oneE18.add(borrowRateBig);
-  const exponent = createBigNumber(126144000);
-
-  // Calculate power using BigInt
-  const interestRateBig = numerator
-    .pow(exponent)
-    .div(oneE18.pow(exponent.minus(1)))
-    .minus(oneE18);
-
-  // Convert interest rate back to a regular number if within safe bounds
-  if (interestRateBig <= Number.MAX_SAFE_INTEGER) {
-    return Number(interestRateBig);
-  } else {
-    return interestRateBig; // Return BigInt if value is too large
-  }
-};
-
 const getBorrowTokenAPY = async (token) => {
   try {
     const totalBorrows = parseUnits(token.totalBorrows, token.decimals);
     const availableLiquidity = parseUnits(token.availableLiquidity, token.decimals);
 
-    const apy = await readContract(config, {
+    // Fetch the raw borrow rate per second/block
+    const rawBorrowRate = await readContract(config, {
       abi: GMInterestRateModel.abi,
       address: env.GM_INTERESTRATE_ADDRESS,
       functionName: "getBorrowRate",
@@ -181,10 +158,21 @@ const getBorrowTokenAPY = async (token) => {
     });
 
     const oneE18 = createBigNumber(parseEther("1"));
-    // 365.25 * 24 * 60 * 60 = 31557600
+    // 365.25 * 24 * 60 * 60 = 31557600 (seconds per year)
     const secondsPerYear = createBigNumber("31557600");
-    const apr = createBigNumber(apy.toString()).mul(secondsPerYear).div(oneE18).mul(100);
-    return apr.toFixed(2);
+
+    // Calculate APY percentage string
+    const borrowApy = createBigNumber(rawBorrowRate.toString())
+      .mul(secondsPerYear)
+      // Convert rate to yearly decimal
+      .div(oneE18)
+      // Convert to percentage
+      .mul(100)
+      // Format to 2 decimal places
+      .toFixed(2);
+
+    // Return both the raw rate and the calculated APY string
+    return {rawRate: rawBorrowRate, apy: borrowApy};
   } catch (error) {
     throw new Web3Exception(`Getting ${token.name} Borrow APY Failed`, {token, error});
   }
@@ -267,7 +255,7 @@ const repay = async (amount, token) => {
 export {
   getTokenTotalBorrow,
   getMaxBorrowableValue,
-  getBorrowTokenAPY,
+  getBorrowTokenAPY, // Keep exporting this name
   getUserCollateralValue,
   getUserCollaterals,
   getUserBorrowBalance,
