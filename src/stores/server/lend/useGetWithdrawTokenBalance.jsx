@@ -1,5 +1,5 @@
 import {useQuery} from "@tanstack/react-query";
-import { formatUnits} from "viem";
+import {formatUnits} from "viem";
 
 import {queries} from "~/consts/queries";
 import env from "~/env";
@@ -11,16 +11,23 @@ const useGetWithdrawTokenBalance = ({returnEtherBalance = true, token}) => {
   const walletAddress = useUserStore((state) => state.walletAddress);
 
   const getData = async () => {
-    if (!walletAddress) return env.EMPTY_VALUE;
+    if (!walletAddress || !token) return env.EMPTY_VALUE;
 
+    // balance is bigint
     const balance = await getPoolAssetBalance(token, walletAddress);
-    const formattedBalance = formatUnits(balance, token.decimals).toString();
+
+    // Directly use formatUnits. It correctly converts bigint to a decimal string.
+    const formattedBalance = formatUnits(balance, token.decimals);
+
+    // Return the raw bigint balance if returnEtherBalance is false
     return returnEtherBalance ? formattedBalance : balance;
   };
 
   return useQuery({
     queryKey: [queries.GET_LEND_WITHDRAW_TOKEN_BALANCE, returnEtherBalance, token, walletAddress],
-    queryFn: getData
+    queryFn: getData,
+    // Ensure query only runs when walletAddress and token are available
+    enabled: !!walletAddress && !!token
   });
 };
 

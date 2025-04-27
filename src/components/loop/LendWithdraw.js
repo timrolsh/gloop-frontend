@@ -1,11 +1,6 @@
-import {useEffect, useMemo, useState} from "react";
+import {useMemo, useState} from "react";
 import {Button} from "react-bootstrap";
-import gloop_img9_url from "../../assets/img/gmi_img9.svg";
-import link_redirect from "../../assets/img/link-redirect.svg";
 import dropdown_img from "../../assets/img/dropdown.svg";
-import usdc_image from "../../assets/img/gloop_usdc.svg";
-import gloop_image5 from "../../assets/img/gloop_img5.svg";
-
 import Skeleton from "../Skeleton";
 import {createBigNumber} from "~/utils/math";
 import {truncateAmount} from "~/utils/ui";
@@ -15,10 +10,8 @@ import useLendWithdraw from "~/stores/server/lend/useLendWithdraw";
 import LendTokenDropdown from "./LendTokenDropdown";
 import useLendStore from "~/stores/client/lend";
 import env from "~/env";
-import {Tooltip} from "~/components/Tooltip";
 import AsyncButton from "~/components/AsyncButton";
 import PriceInput from "~/components/PriceInput";
-import useGetTokensList from "~/stores/server/core/useGetTokensList";
 
 export default function LendWithdraw() {
   const selectedToken = useLendStore((state) => state.selectedToken);
@@ -31,16 +24,23 @@ export default function LendWithdraw() {
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const handleMaxClicked = () => {
-    setAmount(balanceQuery?.data?.toString());
+    // Set amount directly from the fetched balance data (which should be a precise string)
+    if (balanceQuery?.data) {
+      setAmount(balanceQuery.data.toString());
+    }
   };
 
   const handleWithdraw = () => {
-    if (!balanceQuery.data)
+    // Use the fetched balance directly
+    const userBalance = balanceQuery?.data;
+
+    if (!userBalance)
       return new Web3Exception("Failed To Fetch Balance", {balanceQuery}, {sendToast: true});
 
     if (!amount) return new ValidationException("Fill Withdraw Amount First");
 
-    if (createBigNumber(amount).gt(maxWithdrawable.toString()))
+    // Compare amount with the user's balance directly
+    if (createBigNumber(amount).gt(userBalance.toString()))
       return new ValidationException("Withdraw Amount Is Greater Than Max Withdrawable Amount");
 
     setButtonLoading(true);
@@ -55,18 +55,21 @@ export default function LendWithdraw() {
     });
   };
 
-  const maxWithdrawable = useMemo(() => {
-    return Math.min(balanceQuery?.data);
-  }, [balanceQuery]);
-
   const buttonDisabledReason = useMemo(() => {
-    if (!balanceQuery.data) return "Failed To Fetch Balance";
+    // Use the fetched balance directly
+    const userBalance = balanceQuery?.data;
+
+    if (!userBalance) return "Failed To Fetch Balance";
 
     if (!amount) return "Fill Withdraw Amount First";
 
-    if (createBigNumber(amount.toString()).gt(maxWithdrawable.toString()))
+    // Compare amount with the user's balance directly
+    if (createBigNumber(amount.toString()).gt(userBalance.toString()))
       return "Withdraw Amount Is Greater Than Max Withdrawable Amount";
-  }, [amount, balanceQuery, maxWithdrawable]);
+
+    // Return null or undefined if the button should be enabled
+    return null;
+  }, [amount, balanceQuery]);
 
   // Calculate New Supplied Value
   const newDepositedValue = useMemo(() => {
@@ -109,7 +112,7 @@ export default function LendWithdraw() {
             <Skeleton loading={balanceQuery?.isLoading || balanceQuery?.isFetching}>
               <div className="radius-8 bg-trans mt-2 d-flex space-between v-center p-3">
                 <div className="d-flex" style={{gap: "8px"}}>
-                  <img src={selectedToken?.image} width={29} />
+                  <img src={selectedToken?.image} width={29} alt="" />
                   <PriceInput amount={amount} setAmount={setAmount} className="font-12" />
                 </div>
 
@@ -129,7 +132,7 @@ export default function LendWithdraw() {
         <div className="toggler-bar" onClick={() => setInformationVisible(!informationVisible)}>
           <div>Withdraw Details</div>
           <div className="d-flex align-items-center" style={{gap: "10px"}}>
-            <img src={dropdown_img} width={13} />
+            <img src={dropdown_img} width={13} alt="" />
           </div>
         </div>
         {informationVisible && (
@@ -173,6 +176,7 @@ export default function LendWithdraw() {
       <AsyncButton
         onClick={handleWithdraw}
         loading={buttonLoading}
+        // Pass the reason directly, AsyncButton likely handles null/undefined as enabled
         disabledreason={buttonDisabledReason}
         className="mt-4"
       >
