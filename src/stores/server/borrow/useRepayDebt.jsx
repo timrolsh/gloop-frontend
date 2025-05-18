@@ -14,7 +14,7 @@ export const useRepayDebt = ({token}) => {
 
   const repayDebt = async (depositAmount) => {
     try {
-      const parsedAmount = parseUnits(depositAmount.toString(), token.decimals) + 1n; // to fix EVM 1n transfer dust issue
+      const parsedAmount = parseUnits(depositAmount.toString(), token.decimals);
 
       const allowance = await checkAllowance(walletAddress, token);
       const toBeApproved = createBigNumber(parsedAmount).minus(allowance);
