@@ -1,15 +1,10 @@
 import {useMemo, useState} from "react";
-import {Button} from "react-bootstrap";
+import BigNumber from "bignumber.js";
 import gloop_img3_url from "../../assets/img/gmi_img3.svg";
-import gloop_img9_url from "../../assets/img/gmi_img9.svg";
 import market_info from "../../assets/img/market-info.svg";
-import link_redirect from "../../assets/img/link-redirect.svg";
 import dropdown_img from "../../assets/img/dropdown.svg";
-import warning_market from "../../assets/img/warning-market.svg";
 import back_img_url from "../../assets/img/back-icon.svg";
 import useBorrowStore from "~/stores/client/borrow";
-import {routes} from "~/consts/routes";
-import {useNavigate} from "react-router-dom";
 import Skeleton from "../Skeleton";
 import env from "~/env";
 import {createBigNumber} from "~/utils/math";
@@ -21,15 +16,13 @@ import useBorrow from "~/stores/server/borrow/useBorrow";
 import {ValidationException} from "~/consts/exceptions";
 import AsyncButton from "~/components/AsyncButton";
 import PriceInput from "~/components/PriceInput";
-import usePortfolioStore from "~/stores/client/portfolio";
 import useGetTokensList from "~/stores/server/core/useGetTokensList";
 import HealthFactor from "../health-factor/HealthFactor";
 
 export default function MarketBorrow() {
   const selectedMarket = useBorrowStore((state) => state.selectedMarket);
   const setSelectedMarket = useBorrowStore((state) => state.setSelectedMarket);
-  const setActiveTab = useBorrowStore((state) => state.setActiveTab);
-  const setSelectedPosition = usePortfolioStore((state) => state.setSelectedPosition);
+
 
   const [informationVisible, setInformationVisible] = useState(true);
   const [amount, setAmount] = useState("");
@@ -43,11 +36,6 @@ export default function MarketBorrow() {
   const tokenListQuery = useGetTokensList({});
 
   const {mutate: borrow} = useBorrow({token: selectedMarket});
-
-  const handleMaxClicked = () => {
-    setAmount(maxBorrowAble);
-  };
-
   const handleBorrow = () => {
     if (!amount) return new ValidationException("Fill Borrow Amount First");
 
@@ -66,18 +54,20 @@ export default function MarketBorrow() {
     });
   };
 
-  const handleDepositClicked = () => {
-    setSelectedPosition(null);
-    setActiveTab("portfolio");
-  };
-
   const handleSetSelectedAmountPercentage = (item) => {
     // set the selected health factor
     setSelectedAmountPercentage(item);
     const percent = item === 100 ? 99 : item; // adds a little buffering room when 100% is selected
 
+    const decimals = selectedMarket?.decimals;
+    if (!decimals) {
+      // Should not happen if selectedMarket is loaded, which maxBorrowAble depends on
+      console.error("Selected market decimals not available for setting amount.");
+      return;
+    }
     // Hanlde changing amount value based on the selected health factor
-    setAmount(createBigNumber(maxBorrowAble).mul(percent).div(100).toFixed(6, 1));
+    // Use dynamic decimals and ROUND_DOWN
+    setAmount(createBigNumber(maxBorrowAble).mul(percent).div(100).toFixed(decimals, 1));
   };
 
   const borrowHealthy = useMemo(() => {
@@ -88,18 +78,50 @@ export default function MarketBorrow() {
     if (
       !selectedMarket ||
       maxBorrowAbleQuery.isLoading ||
-      selectedMarket.userBorrows === env.EMPTY_VALUE
-    )
+      maxBorrowAbleQuery.data === undefined ||
+      // Indicates current borrows not loaded or zero
+      selectedMarket.userBorrows === env.EMPTY_VALUE ||
+      selectedMarket.availableLiquidity === undefined ||
+      // Indicates available liquidity not loaded or zero
+      selectedMarket.availableLiquidity === env.EMPTY_VALUE ||
+      selectedMarket.decimals === undefined
+    ) {
       return "0";
+    }
 
-    const max = createBigNumber(createBigNumber(maxBorrowAbleQuery.data).toFixed(6, 1)).minus(
-      selectedMarket.userBorrows
+    const decimals = selectedMarket.decimals;
+
+    // 1. Max additional borrow based on Health Factor and current debt
+    // maxBorrowAbleQuery.data is the total value one could borrow (from zero debt) to reach the HF limit (string, standard units).
+    const maxTotalBorrowForHF = createBigNumber(maxBorrowAbleQuery.data);
+    // selectedMarket.userBorrows is current debt (string, standard units).
+    const currentUserBorrows = createBigNumber(
+      selectedMarket.userBorrows === env.EMPTY_VALUE ? "0" : selectedMarket.userBorrows
     );
 
-    if (max.lte(0)) return "0";
+    let maxAdditionalBorrowBasedOnHF = maxTotalBorrowForHF.minus(currentUserBorrows);
 
-    return max.toFixed(6, 1);
-  }, [maxBorrowAbleQuery, selectedMarket]); // configurationsQuery,
+    // 2. Available liquidity in the pool for the selected market (USDC)
+    // selectedMarket.availableLiquidity (string, standard units).
+    const availableLiquidityInPool = createBigNumber(
+      selectedMarket.availableLiquidity === env.EMPTY_VALUE
+        ? "0"
+        : selectedMarket.availableLiquidity
+    );
+
+    // Determine the limiting factor: lesser of HF-based borrow or available pool liquidity
+    let finalMaxBorrowAble = BigNumber.min(
+      maxAdditionalBorrowBasedOnHF,
+      availableLiquidityInPool
+    );
+
+    if (finalMaxBorrowAble.lte(0)) {
+      return "0";
+    }
+
+    // Format to the token's decimals, rounding down (mode 1 for Decimal.js like libraries)
+    return finalMaxBorrowAble.toFixed(decimals, 1);
+  }, [maxBorrowAbleQuery.data, selectedMarket]);
 
   const buttonDisabledReason = useMemo(() => {
     if (!amount || createBigNumber(amount).lte(0)) return "Fill Borrow Amount First";
