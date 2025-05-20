@@ -5,7 +5,7 @@ import {queries} from "~/consts/queries";
 import env from "~/env";
 import useUserStore from "~/stores/client/user";
 
-import {getPoolAssetBalance} from "~/web3/core";
+import {getPoolAssetBalance, getEffectiveUSDCBalance} from "~/web3/core";
 
 const useGetWithdrawTokenBalance = ({returnEtherBalance = true, token}) => {
   const walletAddress = useUserStore((state) => state.walletAddress);
@@ -13,8 +13,13 @@ const useGetWithdrawTokenBalance = ({returnEtherBalance = true, token}) => {
   const getData = async () => {
     if (!walletAddress || !token) return env.EMPTY_VALUE;
 
-    // balance is bigint
-    const balance = await getPoolAssetBalance(token, walletAddress);
+    // For USDC, use getEffectiveUSDCBalanceOf
+    let balance;
+    if (token.name === "USDC") {
+      balance = await getEffectiveUSDCBalance(walletAddress);
+    } else {
+      balance = await getPoolAssetBalance(token, walletAddress);
+    }
 
     // Directly use formatUnits. It correctly converts bigint to a decimal string.
     const formattedBalance = formatUnits(balance, token.decimals);

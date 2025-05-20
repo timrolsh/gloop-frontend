@@ -452,6 +452,22 @@ const getUtilizationRate = async (token, availableLiquidity, totalBorrows) => {
   }
 };
 
+const getEffectiveUSDCBalance = async (userWalletAddress) => {
+  try {
+    return await readContract(config, {
+      abi: lendingPoolAbi.abi,
+      address: env.LENDING_POOL_ADDRESS,
+      functionName: "getEffectiveUSDCBalanceOf",
+      args: [userWalletAddress]
+    });
+  } catch (error) {
+    throw new Web3Exception(
+      `Getting Effective USDC Balance Failed: ${error.shortMessage || "Unknown Reason!"}`,
+      {userWalletAddress, error}
+    );
+  }
+};
+
 export {
   getConfigurations,
   getTokensList,
@@ -468,5 +484,6 @@ export {
   getUtilizationRate,
   getTokenName,
   getTokenSymbol,
-  getUserRefs
+  getUserRefs,
+  getEffectiveUSDCBalance
 };
