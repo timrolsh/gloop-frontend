@@ -19,18 +19,39 @@ import {Tooltip} from "../Tooltip";
 import env from "~/env";
 import AsyncButton from "~/components/AsyncButton";
 import PriceInput from "~/components/PriceInput";
+import useUserStore from "~/stores/client/user";
+import {getEffectiveUSDCBalance} from "~/web3/core";
 
 export default function LendSupply() {
   const selectedToken = useLendStore((state) => state.selectedToken);
+  const walletAddress = useUserStore((state) => state.walletAddress);
+  const [effectiveBalance, setEffectiveBalance] = useState(null);
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
 
   const balanceQuery = useGetDepositTokenBalance({token: selectedToken});
-
   const configurationsQuery = useGetConfigurations({token: selectedToken});
   const {mutate: deposit} = useLendDeposit({token: selectedToken});
 
   const [informationVisible, setInformationVisible] = useState(false);
   const [amount, setAmount] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchEffectiveBalance = async () => {
+      if (!walletAddress) return;
+      setIsLoadingBalance(true);
+      try {
+        const balance = await getEffectiveUSDCBalance(walletAddress);
+        setEffectiveBalance(balance);
+      } catch (error) {
+        console.error("Failed to fetch effective balance:", error);
+      } finally {
+        setIsLoadingBalance(false);
+      }
+    };
+
+    fetchEffectiveBalance();
+  }, [walletAddress]);
 
   const handleMaxClicked = () => {
     setAmount(balanceQuery?.data?.toString());
@@ -71,17 +92,16 @@ export default function LendSupply() {
 
   // Calculate New Supplied Value
   const newSuppliedValue = useMemo(() => {
-    if (
-      !selectedToken ||
-      selectedToken.price === env.EMPTY_VALUE ||
-      selectedToken.userPoolBalance === env.EMPTY_VALUE
-    )
+    // Check if effectiveBalance is null/undefined, not if it's 0
+    if (effectiveBalance === null || effectiveBalance === undefined) {
       return env.EMPTY_VALUE;
+    }
 
-    return createBigNumber(selectedToken.userPoolBalance)
-      .plus(createBigNumber(amount || "0").mul(selectedToken.price))
-      .toString();
-  }, [selectedToken, amount]);
+    const currentBalance = createBigNumber(effectiveBalance);
+    const newAmount = createBigNumber(amount || "0").mul(selectedToken?.price || 0);
+    
+    return currentBalance.plus(newAmount).toString();
+  }, [effectiveBalance, selectedToken, amount]);
 
   return (
     <div className="marklendet-supply">
@@ -136,32 +156,7 @@ export default function LendSupply() {
         {informationVisible && (
           <div className="mt-4">
             <div className="information-detail-items">
-              {/* <Skeleton loading={LendAPYQuery.isLoading}>
-                <div className='d-flex justify-content-between'>
-                  <span className='detail-title'>Supply APY</span>
-
-                  <Tooltip placement='bottom-end' tooltipitem={
-                    <div className='tooltip-body d-flex flex-column gap-2'>
-                      <div className='d-flex justify-content-between'>
-                        <span className='detail-title'>Base APY</span>
-                        <span className='detail-value'>0%</span>
-                      </div>
-                      <div className='d-flex justify-content-between'>
-                        <span className='detail-title'>Bonus APR</span>
-                        <span className='detail-value'>0%</span>
-                      </div>
-
-                      <span style={{ color: '#fff', fontSize: '14px' }}>The Bonus APR will be distributed as ARB tokens. <a href={env.DOCS_URL}>Learn more.</a></span>
-                    </div>
-
-                  }>
-                    <span className='detail-value primary-tooltip'>{LendAPYQuery?.data}%</span>
-                  </Tooltip>
-
-                </div>
-              </Skeleton> */}
-
-              <Skeleton loading={newSuppliedValue === env.EMPTY_VALUE}>
+              <Skeleton loading={isLoadingBalance}>
                 <div className="d-flex justify-content-between">
                   <span className="detail-title">Supplied Value</span>
                   <span className="detail-value">{truncateAmount(newSuppliedValue)} </span>

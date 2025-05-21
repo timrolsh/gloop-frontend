@@ -1,4 +1,4 @@
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Button} from "react-bootstrap";
 import dropdown_img from "../../assets/img/dropdown.svg";
 import Skeleton from "../Skeleton";
@@ -12,9 +12,14 @@ import useLendStore from "~/stores/client/lend";
 import env from "~/env";
 import AsyncButton from "~/components/AsyncButton";
 import PriceInput from "~/components/PriceInput";
+import useUserStore from "~/stores/client/user";
+import {getEffectiveUSDCBalance} from "~/web3/core";
 
 export default function LendWithdraw() {
   const selectedToken = useLendStore((state) => state.selectedToken);
+  const walletAddress = useUserStore((state) => state.walletAddress);
+  const [effectiveBalance, setEffectiveBalance] = useState(null);
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
 
   const balanceQuery = useGetWithdrawTokenBalance({token: selectedToken});
   const {mutate: withdraw} = useLendWithdraw({token: selectedToken});
@@ -23,15 +28,30 @@ export default function LendWithdraw() {
   const [amount, setAmount] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
 
+  useEffect(() => {
+    const fetchEffectiveBalance = async () => {
+      if (!walletAddress) return;
+      setIsLoadingBalance(true);
+      try {
+        const balance = await getEffectiveUSDCBalance(walletAddress);
+        setEffectiveBalance(balance);
+      } catch (error) {
+        console.error("Failed to fetch effective balance:", error);
+      } finally {
+        setIsLoadingBalance(false);
+      }
+    };
+
+    fetchEffectiveBalance();
+  }, [walletAddress]);
+
   const handleMaxClicked = () => {
-    // Set amount directly from the fetched balance data (which should be a precise string)
     if (balanceQuery?.data) {
       setAmount(balanceQuery.data.toString());
     }
   };
 
   const handleWithdraw = () => {
-    // Use the fetched balance directly
     const userBalance = balanceQuery?.data;
 
     if (!userBalance)
@@ -39,7 +59,6 @@ export default function LendWithdraw() {
 
     if (!amount) return new ValidationException("Fill Withdraw Amount First");
 
-    // Compare amount with the user's balance directly
     if (createBigNumber(amount).gt(userBalance.toString()))
       return new ValidationException("Withdraw Amount Is Greater Than Max Withdrawable Amount");
 
@@ -56,37 +75,29 @@ export default function LendWithdraw() {
   };
 
   const buttonDisabledReason = useMemo(() => {
-    // Use the fetched balance directly
     const userBalance = balanceQuery?.data;
 
     if (!userBalance) return "Failed To Fetch Balance";
 
     if (!amount) return "Fill Withdraw Amount First";
 
-    // Compare amount with the user's balance directly
     if (createBigNumber(amount.toString()).gt(userBalance.toString()))
       return "Withdraw Amount Is Greater Than Max Withdrawable Amount";
 
-    // Return null or undefined if the button should be enabled
     return null;
   }, [amount, balanceQuery]);
 
-  // Calculate New Supplied Value
+  // Calculate New Deposited Value
   const newDepositedValue = useMemo(() => {
-    if (
-      !selectedToken ||
-      selectedToken.price === env.EMPTY_VALUE ||
-      selectedToken.userPoolBalance === env.EMPTY_VALUE
-    )
+    if (effectiveBalance === null || effectiveBalance === undefined) {
       return env.EMPTY_VALUE;
+    }
 
-    if (createBigNumber(selectedToken.userPoolBalance).lte(0)) return "0";
-
-    return createBigNumber(selectedToken.userPoolBalance)
-      .mul(selectedToken.price)
-      .minus(createBigNumber(amount || "0").mul(selectedToken.price))
-      .toString();
-  }, [selectedToken, amount]);
+    const currentBalance = createBigNumber(effectiveBalance);
+    const withdrawAmount = createBigNumber(amount || "0").mul(selectedToken?.price || 0);
+    
+    return currentBalance.minus(withdrawAmount).toString();
+  }, [effectiveBalance, selectedToken, amount]);
 
   return (
     <div className="marklendet-supply">
@@ -102,7 +113,7 @@ export default function LendWithdraw() {
             height="20px"
             width="100px"
           >
-            <span>{`User’s Pool Balance: ${truncateAmount(balanceQuery?.data?.toString())} ${
+            <span>{`User's Pool Balance: ${truncateAmount(balanceQuery?.data?.toString())} ${
               selectedToken?.name
             }`}</span>
           </Skeleton>
@@ -138,32 +149,7 @@ export default function LendWithdraw() {
         {informationVisible && (
           <div className="mt-4">
             <div className="information-detail-items">
-              {/* <Skeleton loading={LendAPYQuery.isLoading}>
-                <div className='d-flex justify-content-between'>
-                  <span className='detail-title'>Deposit APY</span>
-
-                  <Tooltip placement='bottom-end' tooltipitem={
-                    <div className='tooltip-body d-flex flex-column gap-2'>
-                      <div className='d-flex justify-content-between'>
-                        <span className='detail-title'>Base APY</span>
-                        <span className='detail-value'>0%</span>
-                      </div>
-                      <div className='d-flex justify-content-between'>
-                        <span className='detail-title'>Bonus APR</span>
-                        <span className='detail-value'>0%</span>
-                      </div>
-
-                      <span style={{ color: '#fff', fontSize: '14px' }}>The Bonus APR will be distributed as ARB tokens. <a href={env.DOCS_URL}>Learn more.</a></span>
-                    </div>
-
-                  }>
-                    <span className='detail-value primary-tooltip'>{LendAPYQuery?.data}%</span>
-                  </Tooltip>
-
-                </div>
-              </Skeleton> */}
-
-              <Skeleton loading={newDepositedValue === env.EMPTY_VALUE}>
+              <Skeleton loading={isLoadingBalance}>
                 <div className="d-flex justify-content-between">
                   <span className="detail-title">Deposited Value</span>
                   <span className="detail-value">{truncateAmount(newDepositedValue)} </span>
@@ -176,7 +162,6 @@ export default function LendWithdraw() {
       <AsyncButton
         onClick={handleWithdraw}
         loading={buttonLoading}
-        // Pass the reason directly, AsyncButton likely handles null/undefined as enabled
         disabledreason={buttonDisabledReason}
         className="mt-4"
       >
