@@ -1,6 +1,6 @@
 import {readContract, writeContract, waitForTransactionReceipt} from "@wagmi/core";
-
 import env from "~/env";
+import useUserStore from "~/stores/client/user";
 
 import lendingPoolAbi from "~/consts/abis/LendingPool.json";
 import GloopGmiCamelotAbi from "~/consts/abis/GloopGmiCamelot.json";
@@ -59,10 +59,42 @@ const checkAllowance = async (
   }
 };
 
+const isAssetEnabled = async (assetAddress) => {
+  try {
+    const walletAddress = useUserStore.getState().walletAddress;
+    return await readContract(config, {
+      abi: lendingPoolAbi.abi,
+      address: env.LENDING_POOL_ADDRESS,
+      functionName: "enabledCollateral",
+      args: [walletAddress, assetAddress]
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Web3Exception(`Checking if asset is enabled failed: ${error.shortMessage || "Unknown Reason!"}`, {
+      assetAddress,
+      error
+    });
+  }
+};
+
 const deposit = async (amount, token) => {
   let toastId = toastLoading("Please Sign Deposit Transaction");
+  const walletAddress = useUserStore.getState().walletAddress;
 
   try {
+    // Check if asset is enabled
+    const isEnabled = await isAssetEnabled(token.address);
+    if (!isEnabled) {
+      throw new Web3Exception("This asset is not enabled for deposits", {token});
+    }
+
+    // First check if we need to approve
+    const allowance = await checkAllowance(walletAddress, token);
+    if (allowance < amount) {
+      // Need to approve first
+      await approve(amount, token);
+    }
+
     const depositHash = await writeContract(config, {
       abi: lendingPoolAbi.abi,
       address: env.LENDING_POOL_ADDRESS,
@@ -77,6 +109,7 @@ const deposit = async (amount, token) => {
     return {hash: depositHash, receipt};
   } catch (error) {
     toastDismiss(toastId);
+    console.log(error);
     throw new Web3Exception(
       `Deposit Failed: ${error.shortMessage || "Unknown Reason!"}`,
       {amount, token, error},
