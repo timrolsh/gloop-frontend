@@ -5,7 +5,6 @@ import {truncateString} from "~/utils/truncateString";
 import {truncateAmount} from "~/utils/ui";
 import Skeleton from "../Skeleton";
 
-import ARBIcon from "~/assets/img/tokens/arbitrum.svg";
 import GloopToken from "~/assets/img/tokens/gloop.jpg";
 import {createBigNumber} from "~/utils/math";
 import useGetOraclePriceFeed from "~/stores/server/core/useGetOraclePriceFeed";
@@ -15,15 +14,10 @@ import useGetGloopPrice from "~/stores/server/lend/useGetGloopPrice";
 
 const RewardTokensTableRow = ({tokenAddress, totalUnclaimedReward}) => {
   const OraclePriceFeedAddressMapper = {
-    "0xFF1CF3E391e012C47AcF3e153FC26fc7D9Ec94a4": "0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6", // FAKE ARB
-    "0x1b9a9f26e553b10AC0d410f67A86A767a35CF162": "0xaD1d5344AaDE45F43E596773Bcc4c423EAbdD034" // GLOOP
+    "0x4d48d503ed04d50418C9aBF163b1168FF834E47c": "0xaD1d5344AaDE45F43E596773Bcc4c423EAbdD034" // GLOOP
   };
 
-  const ImageMapper = {
-    "FAKE ARB": ARBIcon,
-    POOLG: GloopToken,
-    GLOOP: GloopToken
-  };
+
   // APR
   const {data: APR, isLoading: isLoadingAPR} = useGetAPR({
     rewardTokenAddress: tokenAddress
@@ -32,19 +26,19 @@ const RewardTokensTableRow = ({tokenAddress, totalUnclaimedReward}) => {
   const tokenNameQuery = useGetTokenName({tokenAddress});
   const oraclePriceFeedQuery = useGetOraclePriceFeed({
     tokenAddress: OraclePriceFeedAddressMapper[tokenAddress],
-    enabled: tokenAddress !== "0x1b9a9f26e553b10AC0d410f67A86A767a35CF162"
+    enabled: tokenAddress !== "0x4d48d503ed04d50418C9aBF163b1168FF834E47c"
   }); // if token is not Gloop
   const gloopPriceQuery = useGetGloopPrice({
-    enabled: tokenAddress === "0x1b9a9f26e553b10AC0d410f67A86A767a35CF162"
+    enabled: tokenAddress === "0x4d48d503ed04d50418C9aBF163b1168FF834E47c"
   }); // // if token is Gloop
 
   const unclaimedValue = useMemo(() => {
     const price =
-      tokenAddress === "0x1b9a9f26e553b10AC0d410f67A86A767a35CF162"
+      tokenAddress === "0x4d48d503ed04d50418C9aBF163b1168FF834E47c"
         ? gloopPriceQuery.data
         : oraclePriceFeedQuery.data;
 
-    if (!price) return env.EMPTY_VALUE;
+    if (!price || isNaN(price) || Number(price) <= 0) return env.EMPTY_VALUE;
 
     const formatedUnclaimedReward = formatEther(totalUnclaimedReward);
     return createBigNumber(formatedUnclaimedReward).mul(price).toString();
@@ -56,7 +50,7 @@ const RewardTokensTableRow = ({tokenAddress, totalUnclaimedReward}) => {
         <div className="d-flex" style={{gap: "8px"}}>
           <img
             id="tokenImage"
-            src={ImageMapper[tokenNameQuery.data?.symbol]}
+            src={GloopToken}
             width={22}
             height={22}
           />
@@ -64,8 +58,8 @@ const RewardTokensTableRow = ({tokenAddress, totalUnclaimedReward}) => {
             <a
               className="color-gray"
               href={`https://arbiscan.io/address/${tokenAddress}`}
-              target="_blank"
-            >{`${tokenNameQuery.data?.name} (${tokenNameQuery.data?.symbol})`}</a>
+              target="_blank" rel="noreferrer"
+            >GLOOP (GLOOP)</a>
           </td>
         </div>
       </Skeleton>

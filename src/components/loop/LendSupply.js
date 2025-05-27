@@ -97,8 +97,13 @@ export default function LendSupply() {
       return env.EMPTY_VALUE;
     }
 
+    const tokenPrice = selectedToken?.price;
+    if (!tokenPrice || isNaN(tokenPrice) || Number(tokenPrice) <= 0) {
+      return env.EMPTY_VALUE;
+    }
+
     const currentBalance = createBigNumber(effectiveBalance);
-    const newAmount = createBigNumber(amount || "0").mul(selectedToken?.price || 0);
+    const newAmount = createBigNumber(amount || "0").mul(tokenPrice);
     
     return currentBalance.plus(newAmount).toString();
   }, [effectiveBalance, selectedToken, amount]);
