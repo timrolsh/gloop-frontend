@@ -82,11 +82,6 @@ const deposit = async (amount, token) => {
   const walletAddress = useUserStore.getState().walletAddress;
 
   try {
-    // Check if asset is enabled
-    const isEnabled = await isAssetEnabled(token.address);
-    if (!isEnabled) {
-      throw new Web3Exception("This asset is not enabled for deposits", {token});
-    }
 
     // First check if we need to approve
     const allowance = await checkAllowance(walletAddress, token);
