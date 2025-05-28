@@ -95,8 +95,23 @@ export default function LendWithdraw() {
 
     const currentBalance = createBigNumber(effectiveBalance);
     const withdrawAmount = createBigNumber(amount || "0").mul(selectedToken?.price || 0);
-    
-    return currentBalance.minus(withdrawAmount).toString();
+
+    const unadjustedNewDepositedValue = currentBalance.minus(withdrawAmount);
+
+    // Determine the divisor based on token decimals, fallback to 10^6
+    const tokenDecimals = selectedToken?.decimals;
+    // Use 6 if tokenDecimals is not a number or is NaN
+    const power = typeof tokenDecimals === "number" && !isNaN(tokenDecimals) ? tokenDecimals : 6;
+    const divisor = createBigNumber(10).pow(power);
+
+    // Divide by the divisor, ensuring it's not zero to prevent errors
+    // Though 10^power should never be zero unless power is -Infinity, which is unlikely.
+    const adjustedNewDepositedValue = divisor.isZero()
+      ? unadjustedNewDepositedValue
+      : unadjustedNewDepositedValue.div(divisor);
+
+    console.log("New Deposited Value", adjustedNewDepositedValue.toString());
+    return adjustedNewDepositedValue.toString();
   }, [effectiveBalance, selectedToken, amount]);
 
   return (
