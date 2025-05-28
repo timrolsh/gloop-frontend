@@ -93,25 +93,25 @@ export default function LendWithdraw() {
       return env.EMPTY_VALUE;
     }
 
-    const currentBalance = createBigNumber(effectiveBalance);
-    const withdrawAmount = createBigNumber(amount || "0").mul(selectedToken?.price || 0);
-
-    const unadjustedNewDepositedValue = currentBalance.minus(withdrawAmount);
-
     // Determine the divisor based on token decimals, fallback to 10^6
     const tokenDecimals = selectedToken?.decimals;
     // Use 6 if tokenDecimals is not a number or is NaN
     const power = typeof tokenDecimals === "number" && !isNaN(tokenDecimals) ? tokenDecimals : 6;
     const divisor = createBigNumber(10).pow(power);
 
-    // Divide by the divisor, ensuring it's not zero to prevent errors
-    // Though 10^power should never be zero unless power is -Infinity, which is unlikely.
-    const adjustedNewDepositedValue = divisor.isZero()
-      ? unadjustedNewDepositedValue
-      : unadjustedNewDepositedValue.div(divisor);
+    // Convert the current balance from raw format to user-friendly format
+    const currentBalanceRaw = createBigNumber(effectiveBalance);
+    console.log("Current Balance Raw", currentBalanceRaw.toString());
+    const currentBalanceFormatted = divisor.isZero() ? currentBalanceRaw : currentBalanceRaw.div(divisor);
 
-    console.log("New Deposited Value", adjustedNewDepositedValue.toString());
-    return adjustedNewDepositedValue.toString();
+    // The withdraw amount is already in user-friendly format, multiply by price to get USD value
+    const withdrawAmountFormatted = createBigNumber(amount || "0").mul(selectedToken?.price || 0);
+    
+    // Subtract the formatted withdraw amount from the formatted current balance
+    const totalDepositedValue = currentBalanceFormatted.minus(withdrawAmountFormatted);
+
+    console.log("New Deposited Value", totalDepositedValue.toString());
+    return totalDepositedValue.toString();
   }, [effectiveBalance, selectedToken, amount]);
 
   return (
