@@ -102,10 +102,24 @@ export default function LendSupply() {
       return env.EMPTY_VALUE;
     }
 
-    const currentBalance = createBigNumber(effectiveBalance);
-    const newAmount = createBigNumber(amount || "0").mul(tokenPrice);
+    // Determine the divisor based on token decimals, fallback to 10^6
+    const tokenDecimals = selectedToken?.decimals;
+    // Use 6 if tokenDecimals is not a number or is NaN
+    const power = (typeof tokenDecimals === 'number' && !isNaN(tokenDecimals)) ? tokenDecimals : 6;
+    const divisor = createBigNumber(10).pow(power);
+
+    // Convert the current balance from raw format to user-friendly format
+    const currentBalanceRaw = createBigNumber(effectiveBalance);
+    const currentBalanceFormatted = divisor.isZero() ? currentBalanceRaw : currentBalanceRaw.div(divisor);
+
+    // The new amount is already in user-friendly format, multiply by price to get USD value
+    const newAmountFormatted = createBigNumber(amount || "0").mul(tokenPrice);
     
-    return currentBalance.plus(newAmount).toString();
+    // Add the formatted values together
+    const totalSuppliedValue = currentBalanceFormatted.plus(newAmountFormatted);
+
+    // console.log("New Supplied Value", totalSuppliedValue.toString()); // Optional: for debugging
+    return totalSuppliedValue.toString();
   }, [effectiveBalance, selectedToken, amount]);
 
   return (
