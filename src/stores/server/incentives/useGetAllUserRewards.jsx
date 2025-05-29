@@ -27,14 +27,14 @@ const useGetAllUserRewards = ({enabled = true}) => {
 
     if (!rewardsMatrix) { // Handles null/undefined from the fetch function
       finalResult = env.EMPTY_VALUE;
-      console.log("All user rewards from chain (no data from API call):", finalResult);
+      // console.log("All user rewards from chain (no data from API call):", finalResult);
       return finalResult;
     }
 
     // Check if the matrix is empty or if the first row (expected to contain addresses) is missing or empty.
     if (rewardsMatrix.length === 0 || !rewardsMatrix[0] || rewardsMatrix[0].length === 0) {
       finalResult = rewardsMatrix; // e.g., [], [[]], etc.
-      console.log("All user rewards from chain (empty or unfilterable matrix structure):", finalResult);
+      // console.log("All user rewards from chain (empty or unfilterable matrix structure):", finalResult);
       return finalResult;
     }
 
@@ -56,7 +56,7 @@ const useGetAllUserRewards = ({enabled = true}) => {
 
     if (!hasAnyColumnToKeep) {
       finalResult = []; // All tokens/columns are filtered out.
-      console.log("All user rewards from chain (all tokens were filtered out):", finalResult);
+      // console.log("All user rewards from chain (all tokens were filtered out):", finalResult);
       return finalResult;
     }
 
@@ -66,7 +66,7 @@ const useGetAllUserRewards = ({enabled = true}) => {
     );
     
     // Log the final filtered data, as per user's placement of the console.log
-    console.log("All user rewards from chain", finalResult);
+    // console.log("All user rewards from chain", finalResult);
     return finalResult;
   };
 
