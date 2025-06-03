@@ -30,8 +30,7 @@ const useGetAPR = ({rewardTokenAddress, enabled = true}) => {
         return "0";
       }
 
-
-      // Emissions per sec = Reward tokens per sec = 0.01157 Gloop per second
+      // Get GLOOP emissions per second
       const emissionsPerSecond = await getRewardsData(rewardTokenAddress);
 
       if (!emissionsPerSecond || !Array.isArray(emissionsPerSecond) || emissionsPerSecond.length < 2) {
@@ -53,25 +52,39 @@ const useGetAPR = ({rewardTokenAddress, enabled = true}) => {
         return "0";
       }
 
-      // GLOOP has 18 decimals, so use formatEther
-      const rewardTokensPerSec = createBigNumber(formatEther(emissionsPerSecondValue));
-
-      // Reward tokens per day = rewards tokens per sec * 86400
-      const rewardTokensPerDay = rewardTokensPerSec.mul(86400);
-
-      // CRITICAL FIX: USDC has 6 decimals, not 18!
-      // Use formatUnits with 6 decimals instead of formatEther (18 decimals)
+      // Formula: Gloop Simple APR = ((Gloop Emissions Rate * Seconds per year * Gloop Token Price) / total USDC lent) * 100%
+      
+      // GLOOP has 18 decimals, so use formatEther to convert to decimal
+      const gloopEmissionsPerSec = createBigNumber(formatEther(emissionsPerSecondValue));
+      
+      // Seconds per year = 365.25 * 24 * 60 * 60 = 31557600
+      const secondsPerYear = createBigNumber("31557600");
+      
+      // USDC has 6 decimals, so use formatUnits(6) to convert to decimal
       const totalLendingPoolFormatted = createBigNumber(formatUnits(totalLendingPoolUSDCValue, 6));
 
-      // Daily reward rate = [reward tokens per day * price of token] / (total lending pool USDC value)
-      const rewardValuePerDay = rewardTokensPerDay.mul(tokenPrice);
+      console.log("=== APR CALCULATION DEBUG ===");
+      console.log("GLOOP emissions per second:", gloopEmissionsPerSec.toString());
+      console.log("Seconds per year:", secondsPerYear.toString());
+      console.log("GLOOP token price:", tokenPrice);
+      console.log("Total USDC lent:", totalLendingPoolFormatted.toString());
 
-      const dailyRewardRate = rewardValuePerDay.div(totalLendingPoolFormatted);
+      // Apply the formula: (Gloop Emissions Rate * Seconds per year * Gloop Token Price) / total USDC lent * 100
+      const annualRewardValue = gloopEmissionsPerSec
+        .mul(secondsPerYear)
+        .mul(tokenPrice);
+      
+      const aprDecimal = annualRewardValue.div(totalLendingPoolFormatted);
+      
+      // Convert to percentage (multiply by 100)
+      const aprPercentage = aprDecimal.mul(100);
 
-      // APR = daily reward rate * 365
-      const apr = dailyRewardRate.mul(365);
+      console.log("Annual reward value ($):", annualRewardValue.toString());
+      console.log("APR (decimal):", aprDecimal.toString());
+      console.log("APR (percentage):", aprPercentage.toString());
+      console.log("=== APR CALCULATION DEBUG END ===");
 
-      return apr.toString();
+      return aprPercentage.toString();
     } catch (error) {
       console.error("=== APR CALCULATION ERROR ===");
       console.error("Error calculating APR:", error);

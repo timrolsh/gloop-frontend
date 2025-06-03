@@ -20,6 +20,7 @@ const getDexTokenPrice = async (token, roundUp = true) => {
     });
   } catch (error) {
     throw new Web3Exception(`Getting ${token.name} Price Failed`, {token, roundUp, error});
+    // return ;
   }
 };
 

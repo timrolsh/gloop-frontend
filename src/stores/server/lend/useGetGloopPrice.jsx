@@ -3,10 +3,11 @@ import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {queries} from "~/consts/queries";
 
 import useGetGMIPrice from "../gmi/useGetGMIPrice";
-import {getGloopGMIGlobalState} from "~/web3/LendWeb3";
+import {getGloopGMIGlobalState, getGMIUSDCUniswapV4PoolState} from "~/web3/LendWeb3";
 import {createBigNumber} from "~/utils/math";
 import env from "~/env";
 import {useBlockNumber} from "wagmi";
+import { getDexTokenPrice } from "~/web3/GMIWeb3";
 
 const useGetGloopPrice = ({enabled = true}) => {
 
@@ -17,33 +18,48 @@ const useGetGloopPrice = ({enabled = true}) => {
 
   const getData = async () => {
     try {
-      console.log("Getting GLOOP price from Uniswap V4 GLOOP/USDC pool...");
 
-      // Try to get price from Uniswap V4 GLOOP/USDC pool
-      const poolState = await getGloopGMIGlobalState();
+      // Step 1: Get GLOOP/GMI price from the first pool
+      const gloopGmiPoolState = await getGloopGMIGlobalState();
+      
+      // Step 2: Get GMI/USDC price from the second pool
+      
+      // const gmiUsdcPoolState = await getDexTokenPrice();
+      // console.log("gmiUsdcPoolState", gmiUsdcPoolState);
+      const gmiUsdcPoolState = await getGMIUSDCUniswapV4PoolState();
 
-      if (poolState && Array.isArray(poolState) && poolState[0] && poolState[0] !== 0n) {
-        // V4 pool state: [sqrtPriceX96, tick, protocolFee, lpFee]
-        const sqrtPriceX96 = poolState[0];
-        console.log("Successfully got GLOOP/USDC pool data from Uniswap V4");
-        console.log("Raw sqrtPriceX96:", sqrtPriceX96.toString());
+      if (gloopGmiPoolState && Array.isArray(gloopGmiPoolState) && gloopGmiPoolState[0] && gloopGmiPoolState[0] !== 0n &&
+          gmiUsdcPoolState && Array.isArray(gmiUsdcPoolState) && gmiUsdcPoolState[0] && gmiUsdcPoolState[0] !== 0n) {
+        
+        
+        // Calculate GLOOP/GMI price
+        const gloopGmiSqrtPriceX96 = gloopGmiPoolState[0];
 
-        // Convert sqrtPriceX96 to actual price
-        // sqrtPriceX96 = sqrt(price) * 2^96
-        // price = (sqrtPriceX96 / 2^96)^2
         const twoPow96 = createBigNumber(2).pow(96);
-        const sqrtPrice = createBigNumber(sqrtPriceX96.toString()).dividedBy(twoPow96);
-        const price = sqrtPrice.pow(2);
+        const gloopGmiSqrtPrice = createBigNumber(gloopGmiSqrtPriceX96.toString()).dividedBy(twoPow96);
+        const gloopGmiPrice = gloopGmiSqrtPrice.pow(2);
         
-        console.log("Calculated GLOOP price from V4 pool:", price.toString());
         
-        // This gives us GLOOP price in USDC terms
-        // Since USDC ≈ $1, this is approximately the USD price
-        return price.toString();
+        // Calculate GMI/USDC price
+        const gmiUsdcSqrtPriceX96 = gmiUsdcPoolState[0];
+        
+        const gmiUsdcSqrtPrice = createBigNumber(gmiUsdcSqrtPriceX96.toString()).dividedBy(twoPow96);
+        const gmiUsdcPrice = gmiUsdcSqrtPrice.pow(2);
+        
+        
+        // Calculate final GLOOP/USD price: GLOOP/GMI * GMI/USDC = GLOOP/USDC
+        const gloopUsdPrice = gloopGmiPrice.mul(gmiUsdcPrice);
+        
+        // Adjust for token decimal differences (multiply by 10^12)
+        const adjustedGloopUsdPrice = gloopUsdPrice.mul(createBigNumber(10).pow(12));
+        
+        console.log("Final calculated GLOOP/USD price (after 10^12 adjustment):", adjustedGloopUsdPrice.toString());
+        
+        return adjustedGloopUsdPrice.toString();
       }
 
       // Fallback: Use the team's suggested price from their Index app
-      console.log("V4 pool data not available, using fallback GLOOP price");
+      console.log("One or both V4 pools not available, using fallback GLOOP price");
       
       // Based on team discussion, GLOOP was around $1.44 from their Index app
       const fallbackGloopPriceInUSD = "1.44";
