@@ -403,11 +403,11 @@ export default function Home() {
                     <Accordion.Header>Where can I buy $GLOOP</Accordion.Header>
                     <Accordion.Body className="color-gray">
                       <a
-                        href="https://app.camelot.exchange/"
+                        href="https://app.uniswap.org/"
                         target="_blank"
                         className="green-link"
                       >
-                        Camelot DEX.
+                        Uniswap V4 DEX.
                       </a>
                     </Accordion.Body>
                   </Accordion.Item>

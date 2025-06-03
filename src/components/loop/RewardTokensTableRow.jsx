@@ -17,7 +17,6 @@ const RewardTokensTableRow = ({tokenAddress, totalUnclaimedReward}) => {
     "0x4d48d503ed04d50418C9aBF163b1168FF834E47c": "0xaD1d5344AaDE45F43E596773Bcc4c423EAbdD034" // GLOOP
   };
 
-
   // APR
   const {data: APR, isLoading: isLoadingAPR} = useGetAPR({
     rewardTokenAddress: tokenAddress
@@ -38,28 +37,37 @@ const RewardTokensTableRow = ({tokenAddress, totalUnclaimedReward}) => {
         ? gloopPriceQuery.data
         : oraclePriceFeedQuery.data;
 
-    if (!price || isNaN(price) || Number(price) <= 0) return env.EMPTY_VALUE;
+    if (!price || isNaN(price) || Number(price) <= 0) {
+      console.log("Price is invalid, returning EMPTY_VALUE");
+      return env.EMPTY_VALUE;
+    }
+
+    if (!totalUnclaimedReward || totalUnclaimedReward === 0n) {
+      console.log("No unclaimed rewards, returning 0");
+      return "0";
+    }
 
     const formatedUnclaimedReward = formatEther(totalUnclaimedReward);
-    return createBigNumber(formatedUnclaimedReward).mul(price).toString();
+
+    const result = createBigNumber(formatedUnclaimedReward).mul(price).toString();
+
+    return result;
   }, [totalUnclaimedReward, oraclePriceFeedQuery, gloopPriceQuery, tokenAddress]);
 
   return (
     <tr key={tokenAddress}>
       <Skeleton loading={tokenNameQuery.isLoading}>
         <div className="d-flex" style={{gap: "8px"}}>
-          <img
-            id="tokenImage"
-            src={GloopToken}
-            width={22}
-            height={22}
-          />
+          <img id="tokenImage" src={GloopToken} width={22} height={22} />
           <td title={truncateString(tokenAddress)} className="color-gray font-14 bold-300">
             <a
               className="color-gray"
               href={`https://arbiscan.io/address/${tokenAddress}`}
-              target="_blank" rel="noreferrer"
-            >GLOOP (GLOOP)</a>
+              target="_blank"
+              rel="noreferrer"
+            >
+              GLOOP (GLOOP)
+            </a>
           </td>
         </div>
       </Skeleton>

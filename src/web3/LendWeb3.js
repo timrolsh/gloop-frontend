@@ -3,7 +3,8 @@ import env from "~/env";
 import useUserStore from "~/stores/client/user";
 
 import lendingPoolAbi from "~/consts/abis/LendingPool.json";
-import GloopGmiCamelotAbi from "~/consts/abis/GloopGmiCamelot.json";
+// Use the actual Uniswap V4 PoolManager ABI
+import UniswapV4PoolManagerAbi from "~/consts/abis/UniswapV4PoolManager.json";
 import erc20Abi from "~/consts/abis/MockERC20.json";
 import {Web3Exception} from "~/consts/exceptions";
 import {config} from "~/providers/WalletContextProvider";
@@ -190,20 +191,81 @@ const fetchTotalUnderlying = async (assetAddress) => {
   }
 };
 
-const getGloopGMIGlobalState = async () => {
+const getGloopUSDCUniswapV4PoolState = async () => {
   try {
-    return await readContract(config, {
-      abi: GloopGmiCamelotAbi.abi,
-      address: "0xA28D1BCc771c132020c18CC733f0E444C2FD7b5B",
-      functionName: "globalState",
-      args: []
+    // Uniswap V4 PoolManager address on Arbitrum
+    const UNISWAP_V4_POOL_MANAGER_ADDRESS = "0x360E68faCcca8cA495c1B759Fd9EEe466db9FB32";
+    
+    const GLOOP_USDC_POOL_ID = "0x2a147981944315dbb1a2c20a66ed05b6ba29c848d32866739d2124a044c879e7";
+    
+    // StateLibrary constants from the documentation
+    const POOLS_SLOT = 6; // uint256(6)
+    
+    // Calculate the storage slot for pools[poolId].slot0
+    // This follows the Solidity storage layout: keccak256(abi.encode(poolId, POOLS_SLOT))
+    const { keccak256, encodeAbiParameters } = await import('viem');
+    
+    const poolStateSlot = keccak256(
+      encodeAbiParameters(
+        [{ name: 'poolId', type: 'bytes32' }, { name: 'slot', type: 'uint256' }],
+        [GLOOP_USDC_POOL_ID, POOLS_SLOT]
+      )
+    );
+    
+    console.log("Calculated pool state slot:", poolStateSlot);
+    
+    // Use extsload to read the slot0 data
+    const slot0Data = await readContract(config, {
+      abi: UniswapV4PoolManagerAbi.abi,
+      address: UNISWAP_V4_POOL_MANAGER_ADDRESS,
+      functionName: "extsload",
+      args: [poolStateSlot]
     });
+    
+    console.log("Raw slot0 data:", slot0Data);
+    
+    if (!slot0Data || slot0Data === "0x0000000000000000000000000000000000000000000000000000000000000000") {
+      console.log("No pool data found in slot0");
+      return null;
+    }
+    
+    // Decode the packed slot0 data
+    // In Uniswap V4, slot0 contains packed data that needs proper extraction
+    // eslint-disable-next-line no-undef
+    const slot0BigInt = BigInt(slot0Data);
+    
+    // Extract sqrtPriceX96 (160 bits, rightmost)
+    const sqrtPriceX96 = slot0BigInt & ((1n << 160n) - 1n);
+    
+    // Extract tick (24 bits, signed)
+    const tickRaw = (slot0BigInt >> 160n) & ((1n << 24n) - 1n);
+    // Convert to signed 24-bit integer
+    const tick = tickRaw >= (1n << 23n) ? Number(tickRaw - (1n << 24n)) : Number(tickRaw);
+    
+    // Extract protocolFee (24 bits)
+    const protocolFee = Number((slot0BigInt >> 184n) & ((1n << 24n) - 1n));
+    
+    // Extract lpFee (24 bits)
+    const lpFee = Number((slot0BigInt >> 208n) & ((1n << 24n) - 1n));
+    
+    console.log("Decoded slot0 data:");
+    console.log("- sqrtPriceX96:", sqrtPriceX96.toString());
+    console.log("- tick:", tick);
+    console.log("- protocolFee:", protocolFee);
+    console.log("- lpFee:", lpFee);
+    
+    // Validate that we got reasonable data
+    if (sqrtPriceX96 === 0n) {
+      console.log("Invalid sqrtPriceX96 (zero), pool might not be initialized");
+      return null;
+    }
+    
+    // Return in the same format as the original getSlot0 would
+    return [sqrtPriceX96, tick, protocolFee, lpFee];
+    
   } catch (error) {
-    console.log(error);
-    // throw new Web3Exception(`Getting Total Underlying for ${assetAddress} Failed`, {
-    //   assetAddress,
-    //   error,
-    // })
+    console.error("Failed to fetch GLOOP/USDC Uniswap V4 pool state:", error);
+    return null;
   }
 };
 
@@ -214,5 +276,6 @@ export {
   getSupplyAPY,
   withdraw,
   fetchTotalUnderlying,
-  getGloopGMIGlobalState
+  getGloopUSDCUniswapV4PoolState,
+  getGloopUSDCUniswapV4PoolState as getGloopGMIGlobalState // Alias for backward compatibility
 };
