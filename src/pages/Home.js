@@ -69,21 +69,17 @@ export default function Home() {
             </Col>
           </Row>
           <Row className="m-0 radius-8 bg-trans mt-5 border-dark-green border-1">
-            <Col sm={3} className="p-4 w-25-100">
+            <Col sm={4} className="p-4 w-33-100">
               <div className="font-32 bold-600 color-green mb-2">[Soon]</div>
               <div className="font-22 color-white ">TVL</div>
             </Col>
-            <Col sm={3} className="p-4 w-25-100">
+            <Col sm={4} className="p-4 w-33-100">
               <div className="font-32 bold-600 color-green mb-2">[Soon]</div>
               <div className="font-22 color-white ">Total Borrowed</div>
             </Col>
-            <Col sm={3} className="p-4 w-25-100">
+            <Col sm={4} className="p-4 w-33-100">
               <div className="font-32 bold-600 color-green mb-2">[Soon]</div>
               <div className="font-22 color-white ">Total Lent</div>
-            </Col>
-            <Col sm={3} className="p-4 w-25-100">
-              <div className="font-32 bold-600 color-green mb-2">[Soon]</div>
-              <div className="font-22 color-white ">Total Users</div>
             </Col>
           </Row>
         </Container>
@@ -142,8 +138,8 @@ export default function Home() {
                 </div>
                 <div className="font-24 bold-700 color-white mt-3">Low Risk</div>
                 <div className="color-gray font-16 mt-3">
-                  Our smart rebalancing algorithm adjusts the weights of GM’s in the index to
-                  maximize return and minimize risk so you don’t have to constantly rebalance your
+                  Our smart rebalancing algorithm adjusts the weights of GM's in the index to
+                  maximize return and minimize risk so you don't have to constantly rebalance your
                   own portfolio.
                 </div>
               </div>
@@ -306,7 +302,7 @@ export default function Home() {
                 </div>
                 <div className="font-24 bold-700 color-white mt-4">Connect Wallet</div>
                 <div className="color-gray font-16 mt-3">
-                  Connect your wallet with the “connect wallet” button on the top right side of the
+                  Connect your wallet with the "connect wallet" button on the top right side of the
                   page.
                 </div>
               </div>
@@ -341,7 +337,7 @@ export default function Home() {
                 <div className="bg-trans radius-8 p-2 py-3 w-58px text-center">
                   <img src={four_url} width={21} />
                 </div>
-                <div className="font-24 bold-700 color-white mt-4">Borrow Aginst GM’s</div>
+                <div className="font-24 bold-700 color-white mt-4">Borrow Aginst GM's</div>
                 <div className="color-gray font-16 mt-3">
                   Seize opportunities with our lending and borrowing feature, empowering you to
                   leverage GM holdings and gain flexibility in capitalizing on market trends.
@@ -378,7 +374,7 @@ export default function Home() {
                     </Accordion.Header>
                     <Accordion.Body className="color-gray">
                       Only initially, the roadmap includes adding other yield bearing coins like
-                      LSDs/LRT’s later on.
+                      LSDs/LRT's later on.
                     </Accordion.Body>
                   </Accordion.Item>
                   {/* <Accordion.Item eventKey="1">
