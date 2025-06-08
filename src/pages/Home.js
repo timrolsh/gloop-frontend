@@ -25,9 +25,13 @@ import SidebarSocial from "../components/SidebarSoical";
 import {routes} from "../consts/routes";
 import arrow_url from "../assets/img/arrow.svg";
 import env from "~/env";
+import useGetTotalTVL from "~/stores/server/core/useGetTotalTVL";
+import {truncateAmount} from "~/utils/ui";
+import Skeleton from "../components/Skeleton";
 
 export default function Home() {
   const navigate = useNavigate();
+  const {data: totalTVL, isLoading: totalTVLLoading} = useGetTotalTVL({});
 
   return (
     <div>
@@ -48,7 +52,7 @@ export default function Home() {
                 <a
                   href={env.DOCS_URL}
                   target="_blank"
-                  className="btn btn_read_doc gloop-btn-second font-16 bold-700 radius-8 bg-trans-0 border-white color-white p-10-25 my-2"
+                  className="btn btn_read_doc gloop-btn-second font-16 bold-700 radius-8 bg-trans-0 border-white color-white p-10-25 my-2" rel="noreferrer"
                 >
                   Read Documentation
                 </a>
@@ -65,7 +69,14 @@ export default function Home() {
           </Row>
           <Row className="m-0 radius-8 bg-trans mt-5 border-dark-green border-1">
             <Col sm={4} className="p-4 w-33-100">
-              <div className="font-32 bold-600 color-green mb-2">[Soon]</div>
+              <Skeleton
+                loading={totalTVLLoading || totalTVL === env.EMPTY_VALUE}
+                width="120px"
+              >
+                <div className="font-32 bold-600 color-green mb-2">
+                  ${truncateAmount(totalTVL, 2)}
+                </div>
+              </Skeleton>
               <div className="font-22 color-white ">TVL</div>
             </Col>
             <Col sm={4} className="p-4 w-33-100">
@@ -396,7 +407,7 @@ export default function Home() {
                       <a
                         href="https://app.uniswap.org/"
                         target="_blank"
-                        className="green-link"
+                        className="green-link" rel="noreferrer"
                       >
                         Uniswap V4 DEX.
                       </a>
