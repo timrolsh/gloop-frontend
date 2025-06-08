@@ -45,11 +45,6 @@ export default function Home() {
                 Gloop is a lending protocol allowing users to borrow against yield bearing tokens.
               </div>
               <div className="mt-3">
-                <Button className="btn_apply_for_whitelist gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10-25 my-2">
-                  <Link target="_blank" to={env.CAMPAIGN_URL} className="color-dark none-text-line">
-                    Apply For Whitelist
-                  </Link>
-                </Button>
                 <a
                   href={env.DOCS_URL}
                   target="_blank"
