@@ -1,4 +1,4 @@
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, keepPreviousData} from "@tanstack/react-query";
 import {formatEther} from "viem";
 import {queries} from "~/consts/queries";
 import {fetchTotalUnderlying} from "~/web3/LendWeb3";
@@ -66,7 +66,7 @@ const useGetTotalTVL = ({enabled = true}) => {
     queryKey: [queries.GET_TOTAL_TVL, gmiTVL?.toString(), blockNumber?.toString()],
     queryFn: getData,
     enabled: enabled && !gmiTVLLoading && gmiTVL !== undefined,
-    placeholderData: env.EMPTY_VALUE
+    placeholderData: keepPreviousData
   });
 };
 

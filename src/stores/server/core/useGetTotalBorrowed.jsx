@@ -1,4 +1,4 @@
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, keepPreviousData} from "@tanstack/react-query";
 import {formatUnits} from "viem";
 import {queries} from "~/consts/queries";
 import {fetchTotalBorrows} from "~/web3/LendWeb3";
@@ -30,7 +30,7 @@ const useGetTotalBorrowed = ({enabled = true}) => {
     queryKey: [queries.GET_TOTAL_BORROWED, blockNumber?.toString()],
     queryFn: getData,
     enabled,
-    placeholderData: env.EMPTY_VALUE
+    placeholderData: keepPreviousData
   });
 };
 
