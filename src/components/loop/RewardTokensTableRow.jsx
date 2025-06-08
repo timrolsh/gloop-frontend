@@ -18,6 +18,7 @@ const RewardTokensTableRow = ({tokenAddress, totalUnclaimedReward}) => {
   };
 
   // APR
+  
   const {data: APR, isLoading: isLoadingAPR} = useGetAPR({
     rewardTokenAddress: tokenAddress
   });
