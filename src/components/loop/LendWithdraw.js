@@ -101,7 +101,7 @@ export default function LendWithdraw() {
 
     // Convert the current balance from raw format to user-friendly format
     const currentBalanceRaw = createBigNumber(effectiveBalance);
-    console.log("Current Balance Raw", currentBalanceRaw.toString());
+    // console.log("Current Balance Raw", currentBalanceRaw.toString());
     const currentBalanceFormatted = divisor.isZero() ? currentBalanceRaw : currentBalanceRaw.div(divisor);
 
     // The withdraw amount is already in user-friendly format, multiply by price to get USD value
@@ -110,7 +110,7 @@ export default function LendWithdraw() {
     // Subtract the formatted withdraw amount from the formatted current balance
     const totalDepositedValue = currentBalanceFormatted.minus(withdrawAmountFormatted);
 
-    console.log("New Deposited Value", totalDepositedValue.toString());
+    // console.log("New Deposited Value", totalDepositedValue.toString());
     return totalDepositedValue.toString();
   }, [effectiveBalance, selectedToken, amount]);
 

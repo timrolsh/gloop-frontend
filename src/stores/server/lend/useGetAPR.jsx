@@ -63,11 +63,11 @@ const useGetAPR = ({rewardTokenAddress, enabled = true}) => {
       // USDC has 6 decimals, so use formatUnits(6) to convert to decimal
       const totalLendingPoolFormatted = createBigNumber(formatUnits(totalLendingPoolUSDCValue, 6));
 
-      console.log("=== APR CALCULATION DEBUG ===");
-      console.log("GLOOP emissions per second:", gloopEmissionsPerSec.toString());
-      console.log("Seconds per year:", secondsPerYear.toString());
-      console.log("GLOOP token price:", tokenPrice);
-      console.log("Total USDC lent:", totalLendingPoolFormatted.toString());
+      // console.log("=== APR CALCULATION DEBUG ===");
+      // console.log("GLOOP emissions per second:", gloopEmissionsPerSec.toString());
+      // console.log("Seconds per year:", secondsPerYear.toString());
+      // console.log("GLOOP token price:", tokenPrice);
+      // console.log("Total USDC lent:", totalLendingPoolFormatted.toString());
 
       // Apply the formula: (Gloop Emissions Rate * Seconds per year * Gloop Token Price) / total USDC lent * 100
       const annualRewardValue = gloopEmissionsPerSec
@@ -79,10 +79,10 @@ const useGetAPR = ({rewardTokenAddress, enabled = true}) => {
       // Convert to percentage (multiply by 100)
       const aprPercentage = aprDecimal.mul(100);
 
-      console.log("Annual reward value ($):", annualRewardValue.toString());
-      console.log("APR (decimal):", aprDecimal.toString());
-      console.log("APR (percentage):", aprPercentage.toString());
-      console.log("=== APR CALCULATION DEBUG END ===");
+      // console.log("Annual reward value ($):", annualRewardValue.toString());
+      // console.log("APR (decimal):", aprDecimal.toString());
+      // console.log("APR (percentage):", aprPercentage.toString());
+      // console.log("=== APR CALCULATION DEBUG END ===");
 
       return aprPercentage.toString();
     } catch (error) {
