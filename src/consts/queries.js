@@ -11,6 +11,8 @@ export const queries = {
   GET_TOKEN_NAME: "get_token_name",
   GET_TOKEN_ORACLE_PRICE: "get_oracle_token_price",
   GET_TOTAL_TVL: "get_total_tvl",
+  GET_TOTAL_BORROWED: "get_total_borrowed",
+  GET_TOTAL_LENT: "get_total_lent",
 
   // Borrow
   GET_MAX_BORROWABLE_VALUE: "get_max_borrowable_value",

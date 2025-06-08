@@ -26,12 +26,16 @@ import {routes} from "../consts/routes";
 import arrow_url from "../assets/img/arrow.svg";
 import env from "~/env";
 import useGetTotalTVL from "~/stores/server/core/useGetTotalTVL";
+import useGetTotalBorrowed from "~/stores/server/core/useGetTotalBorrowed";
+import useGetTotalLent from "~/stores/server/core/useGetTotalLent";
 import {truncateAmount} from "~/utils/ui";
 import Skeleton from "../components/Skeleton";
 
 export default function Home() {
   const navigate = useNavigate();
   const {data: totalTVL, isLoading: totalTVLLoading} = useGetTotalTVL({});
+  const {data: totalBorrowed, isLoading: totalBorrowedLoading} = useGetTotalBorrowed({});
+  const {data: totalLent, isLoading: totalLentLoading} = useGetTotalLent({});
 
   return (
     <div>
@@ -80,11 +84,25 @@ export default function Home() {
               <div className="font-22 color-white ">TVL</div>
             </Col>
             <Col sm={4} className="p-4 w-33-100">
-              <div className="font-32 bold-600 color-green mb-2">[Soon]</div>
+              <Skeleton
+                loading={totalBorrowedLoading || totalBorrowed === env.EMPTY_VALUE}
+                width="120px"
+              >
+                <div className="font-32 bold-600 color-green mb-2">
+                  ${truncateAmount(totalBorrowed, 2)}
+                </div>
+              </Skeleton>
               <div className="font-22 color-white ">Total Borrowed</div>
             </Col>
             <Col sm={4} className="p-4 w-33-100">
-              <div className="font-32 bold-600 color-green mb-2">[Soon]</div>
+              <Skeleton
+                loading={totalLentLoading || totalLent === env.EMPTY_VALUE}
+                width="120px"
+              >
+                <div className="font-32 bold-600 color-green mb-2">
+                  ${truncateAmount(totalLent, 2)}
+                </div>
+              </Skeleton>
               <div className="font-22 color-white ">Total Lent</div>
             </Col>
           </Row>

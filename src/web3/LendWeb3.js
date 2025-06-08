@@ -191,6 +191,22 @@ const fetchTotalUnderlying = async (assetAddress) => {
   }
 };
 
+const fetchTotalBorrows = async (assetAddress) => {
+  try {
+    return await readContract(config, {
+      abi: lendingPoolAbi.abi,
+      address: env.LENDING_POOL_ADDRESS,
+      functionName: "totalBorrows",
+      args: [assetAddress]
+    });
+  } catch (error) {
+    throw new Web3Exception(`Getting Total Borrows for ${assetAddress} Failed`, {
+      assetAddress,
+      error
+    });
+  }
+};
+
 const getGloopGMIUniswapV4PoolState = async () => {
   try {
     // Uniswap V4 PoolManager address on Arbitrum
@@ -338,6 +354,7 @@ export {
   getSupplyAPY,
   withdraw,
   fetchTotalUnderlying,
+  fetchTotalBorrows,
   getGloopGMIUniswapV4PoolState,
   getGMIUSDCUniswapV4PoolState,
   getGloopGMIUniswapV4PoolState as getGloopGMIGlobalState // Alias for backward compatibility
