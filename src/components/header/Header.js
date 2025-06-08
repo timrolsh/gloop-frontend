@@ -31,7 +31,6 @@ export default function Header() {
     routes.Gmi,
     routes.Liquidate,
     routes.Leaderboard,
-    routes.Stake,
     {name: "Docs", path: env.DOCS_URL}
   ];
   const {pathname: currentUrl} = useLocation();
