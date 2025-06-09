@@ -7,7 +7,16 @@ module.exports = {
       // vents' module
       webpackConfig.resolve.fallback = {
         ...webpackConfig.resolve.fallback, // Spread existing fallbacks
-        events: require.resolve("events/")
+        events: require.resolve("events/"),
+        "crypto": require.resolve("crypto-browserify"),
+        "stream": require.resolve("stream-browserify"),
+        "http": require.resolve("stream-http"),
+        "httpsa": require.resolve("https-browserify"),
+        // "os": require.resolve("os-browserify/browser"),
+        "url": require.resolve("url"),
+        "zlib": require.resolve("zlib-browserify"),
+        "assert": require.resolve("assert/"),
+        "path": require.resolve("path-browserify")
       };
 
       return webpackConfig;
