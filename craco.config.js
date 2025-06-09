@@ -9,6 +9,7 @@ module.exports = {
         ...webpackConfig.resolve.fallback, // Spread existing fallbacks
         events: require.resolve("events/"),
         "crypto": require.resolve("crypto-browserify"),
+        "buffer": require.resolve("buffer/"),
         "stream": require.resolve("stream-browserify"),
         "http": require.resolve("stream-http"),
         "httpsa": require.resolve("https-browserify"),
