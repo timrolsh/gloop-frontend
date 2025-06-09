@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import env from "./env";
 
-if (process.env.NODE_ENV !== "development")
+if (env.NODE_ENV !== "development")
   Sentry.init({
     dsn: env.SENTRY_DSN,
     integrations: [

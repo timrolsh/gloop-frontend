@@ -1,91 +1,29 @@
-import {getEnvSafely} from "./config";
-
-// General
-const VERCEL_ENVIRONMENT = getEnvSafely(
-  process.env.REACT_APP_VERCEL_ENVIRONMENT,
-  "REACT_APP_VERCEL_ENVIRONMENT"
-);
-const EMPTY_VALUE = getEnvSafely(process.env.REACT_APP_EMPTY_VALUE, "REACT_APP_EMPTY_VALUE");
-const API_URL = getEnvSafely(process.env.REACT_APP_API_URL, "REACT_APP_API_URL");
-
-// Sentry
-const SENTRY_DSN = getEnvSafely(process.env.REACT_APP_SENTRY_DSN, "REACT_APP_SENTRY_DSN");
-
-// Socials
-const Discord_URL = getEnvSafely(process.env.REACT_APP_Discord_URL, "REACT_APP_Discord_URL");
-const Twitter_URL = getEnvSafely(process.env.REACT_APP_Twitter_URL, "REACT_APP_Twitter_URL");
-const DOCS_URL = getEnvSafely(process.env.REACT_APP_DOCS_URL, "REACT_APP_DOCS_URL");
-const MEDIUM_URL = getEnvSafely(process.env.REACT_APP_MEDIUM_URL, "REACT_APP_MEDIUM_URL");
-const GITHUB_URL = getEnvSafely(process.env.REACT_APP_GITHUB_URL, "REACT_APP_GITHUB_URL");
-const CAMPAIGN_URL = getEnvSafely(process.env.REACT_APP_CAMPAIGN_URL, "REACT_APP_CAMPAIGN_URL");
-
-// Entrypoint
-const IS_MAINNET = getEnvSafely(process.env.REACT_APP_IS_MAINNET, "REACT_APP_IS_MAINNET");
-const TEST_RPC_URL = getEnvSafely(process.env.REACT_APP_TEST_RPC_URL, "REACT_APP_TEST_RPC_URL");
-
-// Tokens
-const USDC_TOKEN_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_USDC_TOKEN_ADDRESS,
-  "REACT_APP_USDC_TOKEN_ADDRESS"
-);
-const USDC_USDT_TOKEN_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_USDC_USDT_TOKEN_ADDRESS,
-  "REACT_APP_USDC_USDT_TOKEN_ADDRESS"
-);
-const BTC_TOKEN_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_BTC_TOKEN_ADDRESS,
-  "REACT_APP_BTC_TOKEN_ADDRESS"
-);
-const ETH_TOKEN_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_ETH_TOKEN_ADDRESS,
-  "REACT_APP_ETH_TOKEN_ADDRESS"
-);
-const SOL_TOKEN_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_SOL_TOKEN_ADDRESS,
-  "REACT_APP_SOL_TOKEN_ADDRESS"
-);
-const GMI_TOKEN_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_GMI_TOKEN_ADDRESS,
-  "REACT_APP_GMI_TOKEN_ADDRESS"
-);
-
-// Lend
-const LENDING_POOL_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_LENDING_POOL_ADDRESS,
-  "REACT_APP_LENDING_POOL_ADDRESS"
-);
-
-// Oracle
-const ORACLE_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_ORACLE_ADDRESS,
-  "REACT_APP_ORACLE_ADDRESS"
-);
-
-// GM Interest
-const GM_INTERESTRATE_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_GM_INTERESTRATE_ADDRESS,
-  "REACT_APP_GM_INTERESTRATE_ADDRESS"
-);
-
-// GM Points
-const GM_POINTS_CONTRACT_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_GM_POINTS_CONTRACT_ADDRESS,
-  "REACT_APP_GM_POINTS_CONTRACT_ADDRESS"
-);
-
-// GM Incentives
-const GM_INCENTIVES_CONTRACT_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_GM_INCENTIVES_CONTRACT_ADDRESS,
-  "REACT_APP_GM_INCENTIVES_CONTRACT_ADDRESS"
-);
-const REWARDS_ADDRESS = getEnvSafely(
-  process.env.REACT_APP_REWARDS_ADDRESS,
-  "REACT_APP_REWARDS_ADDRESS"
-);
+const API_URL="https://jellyfish-app-ksydb.ondigitalocean.app"
+const BTC_TOKEN_ADDRESS="0x47c031236e19d024b42f8AE6780E44A573170703"
+const CAMPAIGN_URL="https://gleam.io/q19Ja/gloop-token-presale-get-whitelisted"
+const Discord_URL="https://discord.com/invite/Q22GkjWpcM/"
+const DOCS_URL="https://docs.gloop.finance/"
+const EMPTY_VALUE="-"
+const ETH_TOKEN_ADDRESS="0x70d95587d40A2caf56bd97485aB3Eec10Bee6336"
+const GITHUB_URL="https://github.com/"
+const GM_INCENTIVES_CONTRACT_ADDRESS="0x5B28fde611Ed40FFf4d933971fdF975dC6191f9f"
+const GM_INTERESTRATE_ADDRESS="0x991c54E99a4612d90AA21d675C89a1752Da7c233"
+const GMI_TOKEN_ADDRESS="0xAad4187a81689AF72d91966c8119756E425cD7CF"
+const GM_POINTS_CONTRACT_ADDRESS="0xA2751916B54Ee853B35c9a558bd9cA7D8dB5Bd40"
+const IS_MAINNET="true"
+const LENDING_POOL_ADDRESS="0x9BE2e5739B1a6A175d36Ce043f44E66965a433EB"
+const MEDIUM_URL="https://gloopfinance.medium.com/"
+const ORACLE_ADDRESS="0x277e3531d2b697E572E8b4Aa363571836ecA55be"
+const SENTRY_DSN="https://6539da76e48663c4df43e8311056c846@o4507465253388288.ingest.us.sentry.io/4507797243756544"
+const SOL_TOKEN_ADDRESS="0x09400D9DB990D5ed3f35D7be61DfAEB900Af03C9"
+const TEST_RPC_URL="https://twilight-rough-surf.base-sepolia.quiknode.pro/b9c5a985798eb079a46609afba465e1b4524de27/"
+const Twitter_URL="https://twitter.com/gloopfinance/"
+const USDC_TOKEN_ADDRESS="0xaf88d065e77c8cC2239327C5EDb3A432268e5831"
+const USDC_USDT_TOKEN_ADDRESS="0xB686BcB112660343E6d15BDb65297e110C8311c4"
+const NODE_ENV = "production"
 
 const env = {
   // General
-  VERCEL_ENVIRONMENT,
   EMPTY_VALUE,
   API_URL,
 
@@ -126,7 +64,7 @@ const env = {
 
   // GM Incentives
   GM_INCENTIVES_CONTRACT_ADDRESS,
-  REWARDS_ADDRESS
+  NODE_ENV
 };
 
 export default env;
