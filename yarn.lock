@@ -3469,7 +3469,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:5.80.6":
+"@tanstack/query-core@npm:5.80.6, @tanstack/query-core@npm:^5.80.6":
   version: 5.80.6
   resolution: "@tanstack/query-core@npm:5.80.6"
   checksum: 10c0/ce52d962036bf84845c9dafb654075bbc8eafd9236069b7c234b7f72a30e4e61daf222940d9f28b4359858277cc1e1d08dd1f8e6cc0adac72acc083fc5c0195c
@@ -8809,6 +8809,7 @@ __metadata:
     "@popperjs/core": "npm:^2.11.8"
     "@rainbow-me/rainbowkit": "npm:^2.1.7"
     "@sentry/react": "npm:^8.26.0"
+    "@tanstack/query-core": "npm:^5.80.6"
     "@tanstack/react-query": "npm:^5.59.13"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^5.16.5"
