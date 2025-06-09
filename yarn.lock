@@ -9070,6 +9070,7 @@ __metadata:
     buffer: "npm:^6.0.3"
     crypto-browserify: "npm:^3.12.1"
     csstype: "npm:^3.1.3"
+    eslint-config-react-app: "npm:^7.0.1"
     ethers: "npm:^6.13.2"
     events: "npm:^3.3.0"
     fbemitter: "npm:^3.0.0"
