@@ -53,8 +53,19 @@ export default function Footer() {
                   </Link>
                 </div>
                 <div className="footer-menu-item">
-                  <Link to="/#" className="font-14 color-gray none-text-line">
-                    Guide
+                  <Link
+                    to="https://docs.gloop.finance/products/gm-lend-borrow"
+                    className="font-14 color-gray none-text-line"
+                  >
+                    Lending/Borrowing Guide
+                  </Link>
+                </div>
+                <div className="footer-menu-item">
+                  <Link
+                    to="https://docs.gloop.finance/products/gm-index"
+                    className="font-14 color-gray none-text-line"
+                  >
+                    GMI Guide
                   </Link>
                 </div>
                 {/* <div className='footer-menu-item'>

@@ -394,11 +394,10 @@ export default function Home() {
                 <Accordion className="color-gray">
                   <Accordion.Item eventKey="0">
                     <Accordion.Header className="color-white">
-                      Are only GM tokens available for borrowing?
+                    Can assets besides GM tokens be used as collateral?
                     </Accordion.Header>
                     <Accordion.Body className="color-gray">
-                      Only initially, the roadmap includes adding other yield bearing coins like
-                      LSDs/LRT's later on.
+                    Initially, only GM tokens can be used as collateral. Other yield bearing tokens like LSDs/LRTs may be added in the future.
                     </Accordion.Body>
                   </Accordion.Item>
                   {/* <Accordion.Item eventKey="1">
@@ -423,7 +422,7 @@ export default function Home() {
                     <Accordion.Header>Where can I buy $GLOOP</Accordion.Header>
                     <Accordion.Body className="color-gray">
                       <a
-                        href="https://app.uniswap.org/"
+                        href="https://app.uniswap.org/swap?inputCurrency=0xaf88d065e77c8cC2239327C5EDb3A432268e5831&outputCurrency=0x4d48d503ed04d50418C9aBF163b1168FF834E47c&chain=arbitrum"
                         target="_blank"
                         className="green-link" rel="noreferrer"
                       >
