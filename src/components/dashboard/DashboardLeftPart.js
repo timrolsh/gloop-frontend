@@ -20,7 +20,7 @@ export default function DashboardLeftPart() {
             <span className="mr-10">GMI Points</span>
           </div>
           <div className="font-16 bold-300 color-gray my-3">
-            <span className="mr-10">Users Referred</span>
+            <span className="mr-10">Total Users</span>
           </div>
           <div className="font-16 bold-300 color-gray my-3">
             <span className="mr-10">Referral Boost</span>

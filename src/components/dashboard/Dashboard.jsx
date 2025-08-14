@@ -81,20 +81,7 @@ export default function Dashboard() {
                   </div>
                   <div className="d-flex v-center space-between">
                     <div className="font-16 bold-300 color-gray">
-                      <span className="mr-10">Referral Boost</span>
-                    </div>
-                    <Skeleton
-                      loading={userDetailsQuery.isLoading || !userDetailsQuery.data?.referralBoost}
-                      width="80px"
-                    >
-                      <div className="font-16 bold-700 color-white my-3 text-end">
-                        {truncateAmount(parseInt(userDetailsQuery.data?.referralBoost || 0))}
-                      </div>
-                    </Skeleton>
-                  </div>
-                  <div className="d-flex v-center space-between">
-                    <div className="font-16 bold-300 color-gray">
-                      <span className="mr-10">Users Referred</span>
+                      <span className="mr-10">Total Users</span>
                     </div>
                     <Skeleton
                       loading={
@@ -162,18 +149,6 @@ export default function Dashboard() {
                     >
                       <div className="font-20 bold-700 color-white px-2 pb-2">
                         {truncateAmount(userDetailsQuery.data?.borrowingUSDCPoints || "")}
-                      </div>
-                    </Skeleton>
-                  </div>
-                  <div className="d-flex flex-column space-between flex-grow-1">
-                    <div className="p-2">
-                      <span className="font-14 bold-300 color-gray">Referral Boost</span>
-                    </div>
-                    <Skeleton
-                      loading={userDetailsQuery.isLoading || !userDetailsQuery.data?.referralBoost}
-                    >
-                      <div className="font-20 bold-700 color-white px-2 pb-2">
-                        {truncateAmount(parseInt(userDetailsQuery.data?.referralBoost || 0), 2)}%
                       </div>
                     </Skeleton>
                   </div>
