@@ -81,7 +81,7 @@ export default function Dashboard() {
                   </div>
                   <div className="d-flex v-center space-between">
                     <div className="font-16 bold-300 color-gray">
-                      <span className="mr-10">Total Users</span>
+                      <span className="mr-10">Total Number of Users</span>
                     </div>
                     <Skeleton
                       loading={
@@ -154,7 +154,7 @@ export default function Dashboard() {
                   </div>
                   <div className="d-flex flex-column space-between flex-grow-1">
                     <div className="p-2">
-                      <span className="font-14 bold-300 color-gray">Users Referred</span>
+                      <span className="font-14 bold-300 color-gray">Total Number of Users</span>
                     </div>
                     <Skeleton loading={userDetailsQuery.isLoading}>
                       <div className="font-20 bold-700 color-white px-2 pb-2">
