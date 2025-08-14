@@ -23,9 +23,6 @@ export default function DashboardLeftPart() {
             <span className="mr-10">Total Number of Users</span>
           </div>
           <div className="font-16 bold-300 color-gray my-3">
-            <span className="mr-10">Referral Boost</span>
-          </div>
-          <div className="font-16 bold-300 color-gray my-3">
             <span className="mr-10">Total Points</span>
           </div>
           <div className="font-16 bold-300 color-gray my-3">

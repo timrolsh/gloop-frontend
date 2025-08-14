@@ -36,7 +36,7 @@ export default function LeaderboardTableRow({ranking, index, card = false}) {
           </div>
 
           <div className="d-flex justify-content-between">
-            <div className="color-gray font-14 bold-300 py-2">Referral Boost</div>
+            <div className="color-gray font-14 bold-300 py-2">Staking Boost</div>
             <div className="color-white font-14 bold-600 py-2">
               <span className="color-white font-16 bold-700">
                 {truncateAmount(parseInt(ranking.referralBoost), 2)}%

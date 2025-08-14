@@ -13,7 +13,7 @@ export default function LeaderboardTable({rankings, isLoading, isError, isPlaceh
               <th className="color-gray font-14 bold-300">User</th>
               <th className="color-gray font-14 bold-300">Lending Points</th>
               <th className="color-gray font-14 bold-300">Borrowing Points</th>
-              <th className="color-gray font-14 bold-300">Referral Boost</th>
+              <th className="color-gray font-14 bold-300">Staking Boost</th>
               <th className="color-gray font-14 bold-300">Total Points</th>
             </tr>
           </thead>
