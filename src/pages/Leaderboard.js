@@ -1,16 +1,14 @@
-import React, {useState, useEffect, useMemo} from "react";
-import {Row, Col, Button, Container} from "react-bootstrap";
+import React from "react";
+import {Row, Col, Container} from "react-bootstrap";
 import SidebarSocial from "../components/SidebarSoical";
-
 import leaderboard_img1_url from "../assets/img/leaderboard_img1.svg";
 import gmi_img2_url from "../assets/img/gmi_img2.svg";
 import leaderboard_img3_url from "../assets/img/leaderboard_img3.svg";
 import leaderboard_img4_url from "../assets/img/leaderboard_img4.png";
-
 import LeaderboardTable from "../components/leaderboard/LeaderboardTable";
 import useGetLeaderboard from "~/stores/server/leaderboard/useGetLeaderboard";
 import Skeleton from "~/components/Skeleton";
-import {copyToClipboard, truncateAmount} from "~/utils/ui";
+import {truncateAmount} from "~/utils/ui";
 import Dashboard from "~/components/dashboard/Dashboard";
 
 export default function Leaderboard() {
@@ -30,8 +28,8 @@ export default function Leaderboard() {
                 <div className="color-white font-16 my-2">
                   Earn points for participating in Gloop's growing ecosystem by referring friends,
                   lending USDC, and borrowing USDC. Current Rates and Boosts: Lending USDC: 2 points
-                  per dollar per day, Borrowing USDC: 1 point per dollar per day. Referral Boost:
-                  XX% each, with a max of XX referrals.
+                  per dollar per day, Borrowing USDC: 1 point per dollar per day. Staking Boosts: 14
+                  days - 25%, 28 days - 50%, 56 days - 100%.
                 </div>
               </div>
             </Col>
