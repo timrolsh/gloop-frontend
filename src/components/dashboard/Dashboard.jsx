@@ -1,38 +1,12 @@
-import {useMemo, useState} from "react";
-import {Row, Col, Button, Container} from "react-bootstrap";
+import {Row, Col} from "react-bootstrap";
 import Skeleton from "~/components/Skeleton";
 import AsyncButton from "~/components/AsyncButton";
 import useGetUserDetails from "~/stores/server/leaderboard/useGetUserDetails";
-
-import {copyToClipboard, truncateAmount} from "~/utils/ui";
-import useUserStore from "~/stores/client/user";
-import {useAccount} from "wagmi";
-import AddReferral from "../wallet/AddReferral";
+import {truncateAmount} from "~/utils/ui";
 import AuthenticatedSection from "../AuthenticatedSection";
-import useGetUserRefs from "~/stores/server/leaderboard/useGetUserRefs";
 
 export default function Dashboard() {
   const userDetailsQuery = useGetUserDetails();
-  const userRefsQuery = useGetUserRefs({});
-
-  const {isConnected} = useAccount();
-
-  const [addReferralModalVisible, setAddReferralModalVisible] = useState(false);
-
-  const handleOpenReferral = () => {
-    setAddReferralModalVisible(true);
-  };
-
-  const addReferralButtonDisabledReason = useMemo(() => {
-    if (!isConnected) return "Please Connect Wallet First!";
-
-    const hasReferrer =
-      userRefsQuery.data && Array.isArray(userRefsQuery.data) && userRefsQuery.data.length
-        ? userRefsQuery.data[1]
-        : false;
-
-    if (hasReferrer) return "Referral Is Already Used!";
-  }, [isConnected, userRefsQuery]);
 
   return (
     <>
@@ -40,46 +14,28 @@ export default function Dashboard() {
         <Col sm={12}>
           <div className="space-between align-items-center my-2 desktop-flex">
             <div className="mobile-show">
-              <Skeleton width="400px" loading={userRefsQuery.isLoading}>
-                <div className="mt-4 my-2 d-flex flex-column" style={{gap: "8px"}}>
-                  <AsyncButton
-                    className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
-                    disabledreason={addReferralButtonDisabledReason}
-                    onClick={handleOpenReferral}
-                  >
-                    Add Referrer
-                  </AsyncButton>
-                  <AsyncButton
-                    className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
-                    disabledreason={"Coming Soon"}
-                  >
-                    Claim Points
-                  </AsyncButton>
-                </div>
-              </Skeleton>
+              <div className="mt-4 my-2 d-flex flex-column" style={{gap: "8px"}}>
+                <AsyncButton
+                  className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
+                  disabledreason={"Coming Soon"}
+                >
+                  Claim Points
+                </AsyncButton>
+              </div>
             </div>
             <div className="font-32 bold-700 color-white d-flex align-items-center my-4">
               My Dashboard
             </div>
 
             <div className="desktop-show">
-              <Skeleton width="400px" loading={userRefsQuery.isLoading}>
-                <div className="my-2 d-flex" style={{gap: "8px"}}>
-                  <AsyncButton
-                    className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
-                    disabledreason={"Coming Soon"}
-                  >
-                    Claim Points
-                  </AsyncButton>
-                  <AsyncButton
-                    className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
-                    disabledreason={addReferralButtonDisabledReason}
-                    onClick={handleOpenReferral}
-                  >
-                    Add Referrer
-                  </AsyncButton>
-                </div>
-              </Skeleton>
+              <div className="my-2 d-flex" style={{gap: "8px"}}>
+                <AsyncButton
+                  className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
+                  disabledreason={"Coming Soon"}
+                >
+                  Claim Points
+                </AsyncButton>
+              </div>
             </div>
           </div>
         </Col>
@@ -261,9 +217,6 @@ export default function Dashboard() {
           </Col>
         </AuthenticatedSection>
       </Row>
-      {addReferralModalVisible ? (
-        <AddReferral onClose={() => setAddReferralModalVisible(false)} />
-      ) : null}
     </>
   );
 }
