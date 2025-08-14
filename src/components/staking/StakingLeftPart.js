@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Row, Col} from "react-bootstrap";
 import AsyncButton from "~/components/AsyncButton";
 import AuthenticatedSection from "../AuthenticatedSection";
+import gloop_img1_url from "../../assets/img/gloop_img1.svg";
 
 export default function StakingLeftPart() {
   const [selectedLockPeriod, setSelectedLockPeriod] = useState(14);
@@ -91,7 +92,7 @@ export default function StakingLeftPart() {
                     />
                     <div className="d-flex v-center" style={{gap: "8px"}}>
                       <img
-                        src="/assets/img/tokens/gloop.jpg"
+                        src={gloop_img1_url}
                         width={24}
                         height={24}
                         className="radius-8"
@@ -176,7 +177,7 @@ export default function StakingLeftPart() {
                     />
                     <div className="d-flex v-center" style={{gap: "8px"}}>
                       <img
-                        src="/assets/img/tokens/gloop.jpg"
+                        src={gloop_img1_url}
                         width={24}
                         height={24}
                         className="radius-8"
