@@ -1,12 +1,13 @@
 import {Container, Navbar, Nav, Dropdown} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-
 import {routes} from "~/consts/routes";
 import env from "~/env";
 import eventEmitter from "~/utils/emitter";
 import {events} from "~/consts/events";
-
+import {useUser} from "~/hooks/user";
+import {useAccount} from "wagmi";
+import useUserStore from "~/stores/client/user";
 import ConnectWalletButton from "~/components/wallet/ConnectWalletButton";
 
 // images
@@ -19,15 +20,11 @@ import m_url from "~/assets/img/m.svg";
 import dropdown_close_url from "~/assets/img/dropdown-close.svg";
 import dropdown_open_url from "~/assets/img/dropdown-open.svg";
 
-import AuthenticationRequiredButton from "../AuthenticationRequiredButton";
-import {useUser} from "~/hooks/user";
-import {useAccount} from "wagmi";
-import useUserStore from "~/stores/client/user";
-
 export default function Header() {
   const links = [
     routes.Borrow,
     routes.Lend,
+    routes.Staking,
     routes.Gmi,
     routes.Liquidate,
     routes.Leaderboard,
@@ -154,16 +151,16 @@ export default function Header() {
               {/* {!isAuthenticated() && <Link onClick={() => handleOpenReferralModal()} className={`menu-item font-14 color-white-50 none-text-line px-2`}>Referrals</Link>} */}
 
               <div className="menu-item mobile-show  px-2 mt-2">
-                <a href={env.Twitter_URL} target="_blank" className="social-item">
+                <a href={env.Twitter_URL} target="_blank" className="social-item" rel="noreferrer">
                   <img src={twitter_url} width={18} />
                 </a>
-                <a href={env.Discord_URL} target="_blank" className="social-item">
+                <a href={env.Discord_URL} target="_blank" className="social-item" rel="noreferrer">
                   <img src={discord_url} width={18} />
                 </a>
-                <a href={env.DOCS_URL} target="_blank" className="social-item">
+                <a href={env.DOCS_URL} target="_blank" className="social-item" rel="noreferrer">
                   <img src={book_url} width={18} />
                 </a>
-                <a href={env.MEDIUM_URL} target="_blank" className="social-item">
+                <a href={env.MEDIUM_URL} target="_blank" className="social-item" rel="noreferrer">
                   <img src={m_url} width={18} />
                 </a>
               </div>

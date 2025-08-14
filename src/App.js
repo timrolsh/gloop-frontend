@@ -10,6 +10,7 @@ import Leaderboard from "./pages/Leaderboard";
 import Liquidate from "./pages/Liquidate";
 import Borrow from "./pages/Borrow";
 import Lend from "./pages/Lend";
+import Staking from "./pages/Staking";
 import {routes} from "./consts/routes";
 
 import Toast from "./components/Toaster";
@@ -69,6 +70,14 @@ function App() {
           element={
             <ProtectedRoute route={routes.Liquidate}>
               <Liquidate />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={routes.Staking.path}
+          element={
+            <ProtectedRoute route={routes.Staking}>
+              <Staking />
             </ProtectedRoute>
           }
         />

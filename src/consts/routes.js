@@ -6,5 +6,6 @@ export const routes = {
   Loop: {name: "Loop", path: "/loop", locked: false, authenticated: false},
   Liquidate: {name: "Liquidate", path: "/liquidate", locked: false, authenticated: false},
   Borrow: {name: "Deposit/Borrow", path: "/borrow", locked: false, authenticated: false},
-  Lend: {name: "Lend USDC", path: "/lend", locked: false, authenticated: false}
+  Lend: {name: "Lend USDC", path: "/lend", locked: false, authenticated: false},
+  Staking: {name: "Staking", path: "/staking", locked: false, authenticated: false}
 };

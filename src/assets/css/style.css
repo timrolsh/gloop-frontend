@@ -796,6 +796,7 @@ body {
 /*generated with Input range slider CSS style generator (version 20211225)
 https://toughengineer.github.io/demo/slider-styler*/
 input[type="range"].styled-slider {
+  appearance: none;
   -webkit-appearance: none;
 }
 
@@ -1446,6 +1447,54 @@ button:active {
     font-size: 16px;
     padding-left: 3px !important;
   }
+}
+
+/* Staking Page Styles */
+.staking-period-card {
+  transition: all 0.2s ease;
+}
+
+.staking-period-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 251, 128, 0.1);
+}
+
+.staking-period-card.selected {
+  box-shadow: 0 0 0 2px #19fb80;
+}
+
+.staking-position-card {
+  transition: all 0.2s ease;
+}
+
+.staking-position-card:hover {
+  background: #2c312f;
+}
+
+.boost-badge {
+  background: linear-gradient(45deg, #19fb80, #14c966);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.lock-period-selector {
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.lock-period-selector:hover {
+  border-color: #19fb80;
+}
+
+.lock-period-selector.active {
+  border-color: #19fb80;
+  background: rgba(25, 251, 128, 0.1);
+}
+
+.staking-summary-card {
+  background: linear-gradient(135deg, #222725 0%, #2c312f 100%);
 }
 
 @keyframes pulse {
