@@ -10,6 +10,15 @@ export const scalePoints = (points) => {
   return Math.floor(numericPoints / 1000);
 };
 
+export const formatStakingBoost = (stakingBoost) => {
+  if (!stakingBoost || stakingBoost === env.EMPTY_VALUE) return "0";
+  
+  const numericBoost = parseFloat(stakingBoost);
+  if (isNaN(numericBoost) || numericBoost < 0) return "0";
+  
+  return numericBoost.toString();
+};
+
 export const truncateAmount = (amount, decimalCount = 4, formatWithCommas = true) => {
   if (amount === env.EMPTY_VALUE) return env.EMPTY_VALUE;
 

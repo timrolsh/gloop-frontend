@@ -24,9 +24,9 @@ export default function Header() {
   const links = [
     routes.Borrow,
     routes.Lend,
+    routes.Liquidate,
     routes.Staking,
     routes.Gmi,
-    routes.Liquidate,
     routes.Leaderboard,
     {name: "Docs", path: env.DOCS_URL}
   ];

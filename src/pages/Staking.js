@@ -29,7 +29,7 @@ export default function Staking() {
             <Col sm={3} className="w-25-100">
               <div className="mobile-left my-3">
                 <Link
-                  to={env.DOCS_URL}
+                  to={"https://docs.gloop.finance/products/gloop-staking"}
                   target="_blank"
                   className="gloop-btn-second btn font-16 radius-8 bg-trans-0 border-white color-white p-10-25 my-2"
                 >

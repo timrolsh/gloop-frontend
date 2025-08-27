@@ -40,6 +40,11 @@ export default function Footer() {
                     {routes.Gmi.name}
                   </Link>
                 </div>
+                <div className="footer-menu-item">
+                  <Link to={routes.Staking.path} className="font-14 color-gray none-text-line">
+                    {routes.Staking.name}
+                  </Link>
+                </div>
               </Col>
               <Col sm={4} className="width-33-50">
                 <div className="color-white font-16 bold-700 mb-3">Resources</div>

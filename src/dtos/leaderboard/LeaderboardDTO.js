@@ -4,13 +4,13 @@ export class LeaderboardDTO {
     lendingUSDCPoints = "",
     borrowingUSDCPoints = "",
     totalEarnedPoints = "",
-    referralBoost = "",
+    stakingBoost = "",
     rank = ""
   ) {
     this.address = address;
     this.lendingUSDCPoints = lendingUSDCPoints;
     this.borrowingUSDCPoints = borrowingUSDCPoints;
-    this.referralBoost = referralBoost;
+    this.stakingBoost = stakingBoost;
     this.totalEarnedPoints = totalEarnedPoints;
     this.rank = rank;
   }
