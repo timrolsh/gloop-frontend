@@ -1,4 +1,4 @@
-import {partializeWalletAddress, truncateAmount, scalePoints} from "~/utils/ui";
+import {partializeWalletAddress, truncateAmount, scalePoints, formatStakingBoost} from "~/utils/ui";
 
 export default function LeaderboardTableRow({ranking, index, card = false}) {
   return (
@@ -39,7 +39,7 @@ export default function LeaderboardTableRow({ranking, index, card = false}) {
             <div className="color-gray font-14 bold-300 py-2">Staking Boost</div>
             <div className="color-white font-14 bold-600 py-2">
               <span className="color-white font-16 bold-700">
-                {truncateAmount(parseInt(ranking.referralBoost), 2)}%
+                {formatStakingBoost(ranking.stakingBoost)}%
               </span>
             </div>
           </div>
@@ -70,7 +70,7 @@ export default function LeaderboardTableRow({ranking, index, card = false}) {
             {truncateAmount(scalePoints(ranking.borrowingUSDCPoints))}
           </td>
           <td className="color-white font-16 bold-700">
-            {truncateAmount(parseInt(ranking.referralBoost))}%
+            {formatStakingBoost(ranking.stakingBoost)}%
           </td>
           <td className="color-white font-16 bold-700">
             {truncateAmount(scalePoints(ranking.totalEarnedPoints))}
