@@ -26,19 +26,19 @@ export default function Leaderboard() {
                   <img src={leaderboard_img1_url} width={62} />
                 </div>
                 <div className="color-white font-16 my-2">
-                  Earn points for participating in Gloop's growing ecosystem by referring friends,
-                  lending USDC, and borrowing USDC. Current Rates and Boosts: Lending USDC: 2 points
-                  per dollar per day, Borrowing USDC: 1 point per dollar per day. Staking Boosts: 14
-                  days - 25%, 28 days - 50%, 56 days - 100%.
+                  Earn points for participating in Gloop's growing ecosystem by lending USDC, and
+                  borrowing USDC. Current Rates and Boosts: Lending USDC: 2 points per dollar per
+                  day, Borrowing USDC: 1 point per dollar per day. Staking Boosts: 14 days - 25%, 28
+                  days - 50%, 56 days - 100%.
                 </div>
               </div>
             </Col>
             <Col sm={3} className="w-25-100">
               <div className="mobile-left my-3 desktop-show">
                 <a
-                  href="#"
+                  href="https://docs.gloop.finance/frequently-asked-questions-faqs/gm-points"
                   target="_blank"
-                  className="gloop-btn-second btn font-16 bold-400 radius-8 bg-trans-0 border-white color-white p-10-25 my-2 min-w-200"
+                  className="gloop-btn-second btn font-16 bold-400 radius-8 bg-trans-0 border-white color-white p-10-25 my-2 min-w-200" rel="noreferrer"
                 >
                   <span className="mr-10">How to earn Points</span>
                   <img src={gmi_img2_url} width={12} />
@@ -46,9 +46,9 @@ export default function Leaderboard() {
               </div>
               <div className="mobile-left mt-2 mobile-show">
                 <a
-                  href="#"
+                  href="https://docs.gloop.finance/frequently-asked-questions-faqs/gm-points"
                   target="_blank"
-                  className="gloop-btn-second btn font-16 bold-400 radius-8 bg-trans-0 border-white color-white p-10-25 my-2 min-w-200"
+                  className="gloop-btn-second btn font-16 bold-400 radius-8 bg-trans-0 border-white color-white p-10-25 my-2 min-w-200" rel="noreferrer"
                 >
                   <span className="mr-10">How to earn Points</span>
                   <img src={gmi_img2_url} width={12} />

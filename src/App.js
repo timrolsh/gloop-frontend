@@ -5,7 +5,6 @@ import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import Home from "./pages/Home";
 import Gmi from "./pages/Gmi";
-import Dashboard from "./pages/Dashboard";
 import Leaderboard from "./pages/Leaderboard";
 import Liquidate from "./pages/Liquidate";
 import Borrow from "./pages/Borrow";
@@ -46,14 +45,6 @@ function App() {
           element={
             <ProtectedRoute route={routes.Gmi}>
               <Gmi />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={routes.Dashboard.path}
-          element={
-            <ProtectedRoute route={routes.Dashboard}>
-              <Dashboard />
             </ProtectedRoute>
           }
         />
