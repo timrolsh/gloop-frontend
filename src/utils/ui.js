@@ -1,6 +1,15 @@
 import env from "~/env";
 import {toastSuccess} from "./toast";
 
+export const scalePoints = (points) => {
+  if (!points || points === env.EMPTY_VALUE) return points;
+  
+  const numericPoints = parseFloat(points);
+  if (isNaN(numericPoints)) return points;
+  
+  return Math.floor(numericPoints / 1000);
+};
+
 export const truncateAmount = (amount, decimalCount = 4, formatWithCommas = true) => {
   if (amount === env.EMPTY_VALUE) return env.EMPTY_VALUE;
 

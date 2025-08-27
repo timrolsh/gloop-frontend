@@ -1,4 +1,4 @@
-import {partializeWalletAddress, truncateAmount} from "~/utils/ui";
+import {partializeWalletAddress, truncateAmount, scalePoints} from "~/utils/ui";
 
 export default function LeaderboardTableRow({ranking, index, card = false}) {
   return (
@@ -21,7 +21,7 @@ export default function LeaderboardTableRow({ranking, index, card = false}) {
             <div className="color-gray font-14 bold-300 py-2">Lending Points</div>
             <div className="color-white font-14 bold-600 py-2">
               <span className="color-white font-16 bold-700">
-                {truncateAmount(ranking.lendingUSDCPoints)}
+                {truncateAmount(scalePoints(ranking.lendingUSDCPoints))}
               </span>
             </div>
           </div>
@@ -30,7 +30,7 @@ export default function LeaderboardTableRow({ranking, index, card = false}) {
             <div className="color-gray font-14 bold-300 py-2">Borrowing Points</div>
             <div className="color-white font-14 bold-600 py-2">
               <span className="color-white font-16 bold-700">
-                {truncateAmount(ranking.borrowingUSDCPoints)}
+                {truncateAmount(scalePoints(ranking.borrowingUSDCPoints))}
               </span>
             </div>
           </div>
@@ -48,7 +48,7 @@ export default function LeaderboardTableRow({ranking, index, card = false}) {
             <div className="color-gray font-14 bold-300 py-2">Total Points</div>
             <div className="color-white font-14 bold-600 py-2">
               <span className="color-white font-16 bold-700">
-                {truncateAmount(ranking.totalEarnedPoints)}
+                {truncateAmount(scalePoints(ranking.totalEarnedPoints))}
               </span>
             </div>
           </div>
@@ -64,16 +64,16 @@ export default function LeaderboardTableRow({ranking, index, card = false}) {
             {partializeWalletAddress(ranking.address)}
           </td>
           <td className="color-white font-16 bold-700">
-            {truncateAmount(ranking.lendingUSDCPoints)}
+            {truncateAmount(scalePoints(ranking.lendingUSDCPoints))}
           </td>
           <td className="color-white font-16 bold-700">
-            {truncateAmount(ranking.borrowingUSDCPoints)}
+            {truncateAmount(scalePoints(ranking.borrowingUSDCPoints))}
           </td>
           <td className="color-white font-16 bold-700">
             {truncateAmount(parseInt(ranking.referralBoost))}%
           </td>
           <td className="color-white font-16 bold-700">
-            {truncateAmount(ranking.totalEarnedPoints)}
+            {truncateAmount(scalePoints(ranking.totalEarnedPoints))}
           </td>
         </tr>
       )}

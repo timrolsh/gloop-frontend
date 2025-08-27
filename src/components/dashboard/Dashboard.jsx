@@ -2,7 +2,7 @@ import {Row, Col} from "react-bootstrap";
 import Skeleton from "~/components/Skeleton";
 import AsyncButton from "~/components/AsyncButton";
 import useGetUserDetails from "~/stores/server/leaderboard/useGetUserDetails";
-import {truncateAmount} from "~/utils/ui";
+import {truncateAmount, scalePoints} from "~/utils/ui";
 import AuthenticatedSection from "../AuthenticatedSection";
 
 export default function Dashboard() {
@@ -60,7 +60,7 @@ export default function Dashboard() {
                       width="80px"
                     >
                       <div className="font-16 bold-700 color-white text-end">
-                        {truncateAmount(userDetailsQuery.data?.lendingUSDCPoints || "")}
+                        {truncateAmount(scalePoints(userDetailsQuery.data?.lendingUSDCPoints) || "")}
                       </div>
                     </Skeleton>
                   </div>
@@ -75,7 +75,7 @@ export default function Dashboard() {
                       width="80px"
                     >
                       <div className="font-16 bold-700 color-white text-end">
-                        {truncateAmount(userDetailsQuery.data?.borrowingUSDCPoints || "")}
+                        {truncateAmount(scalePoints(userDetailsQuery.data?.borrowingUSDCPoints) || "")}
                       </div>
                     </Skeleton>
                   </div>
@@ -91,7 +91,7 @@ export default function Dashboard() {
                       width="80px"
                     >
                       <div className="font-16 bold-700 color-green text-end">
-                        {truncateAmount(userDetailsQuery.data?.totalEarnedPoints || "")}
+                        {truncateAmount(scalePoints(userDetailsQuery.data?.totalEarnedPoints) || "")}
                       </div>
                     </Skeleton>
                   </div>
@@ -120,7 +120,7 @@ export default function Dashboard() {
                       }
                     >
                       <div className="font-20 bold-700 color-white px-2 pb-2">
-                        {truncateAmount(userDetailsQuery.data?.lendingUSDCPoints || "")}
+                        {truncateAmount(scalePoints(userDetailsQuery.data?.lendingUSDCPoints) || "")}
                       </div>
                     </Skeleton>
                   </div>
@@ -134,7 +134,7 @@ export default function Dashboard() {
                       }
                     >
                       <div className="font-20 bold-700 color-white px-2 pb-2">
-                        {truncateAmount(userDetailsQuery.data?.borrowingUSDCPoints || "")}
+                        {truncateAmount(scalePoints(userDetailsQuery.data?.borrowingUSDCPoints) || "")}
                       </div>
                     </Skeleton>
                   </div>
@@ -149,7 +149,7 @@ export default function Dashboard() {
                       }
                     >
                       <div className="font-20 bold-700 color-green px-2 pb-2">
-                        {truncateAmount(userDetailsQuery.data?.totalEarnedPoints || "")}
+                        {truncateAmount(scalePoints(userDetailsQuery.data?.totalEarnedPoints) || "")}
                       </div>
                     </Skeleton>
                   </div>
