@@ -3,44 +3,55 @@ import {Row, Col} from "react-bootstrap";
 import AsyncButton from "~/components/AsyncButton";
 import AuthenticatedSection from "../AuthenticatedSection";
 import Skeleton from "../Skeleton";
+import useGetTotalStaked from "~/stores/server/staking/useGetTotalStaked";
+import useGetTotalStakers from "~/stores/server/staking/useGetTotalStakers";
+import useGetUserStakedAmount from "~/stores/server/staking/useGetUserStakedAmount";
+import useGetUserStakingPositions from "~/stores/server/staking/useGetUserStakingPositions";
+import useUnstakeGloop from "~/stores/server/staking/useUnstakeGloop";
+import {createBigNumber} from "~/utils/math";
 
 export default function StakingRightPart() {
   const [activeTab, setActiveTab] = useState("Overview");
 
-  // Mock data - replace with actual data from hooks
+  // Hooks
+  const {data: totalStaked, isLoading: totalStakedLoading} = useGetTotalStaked({});
+  const {data: totalStakers, isLoading: totalStakersLoading} = useGetTotalStakers({});
+  const {data: userStakedAmount, isLoading: userStakedLoading} = useGetUserStakedAmount({});
+  const {data: userPosition, isLoading: userPositionLoading} = useGetUserStakingPositions({});
+  const {mutateAsync: unstakeGloop, isPending: isUnstaking} = useUnstakeGloop();
+
+  // Format data for display
   const stakingOverview = {
-    totalStaked: "1,234,567",
-    totalStakers: "1,234",
-    userStaked: "0",
-    userBoost: "0"
+    totalStaked: totalStaked ? createBigNumber(totalStaked).toFormat(0) : "0",
+    totalStakers: totalStakers ? totalStakers.toString() : "0",
+    userStaked: userStakedAmount ? createBigNumber(userStakedAmount).toFormat(2) : "0",
+    userBoost: userPosition?.boost || "0"
   };
 
-  const userStakingPositions = [
-    // Mock positions - replace with actual user positions
+  // Convert single position to array format for compatibility with existing UI
+  const userStakingPositions = userPosition && parseFloat(userPosition.amountStaked) > 0 ? [
     {
       id: 1,
-      amount: "1,000",
-      lockPeriod: 14,
-      boost: 25,
-      unlockDate: "2024-02-15",
-      status: "active"
-    },
-    {
-      id: 2,
-      amount: "500",
-      lockPeriod: 28,
-      boost: 50,
-      unlockDate: "2024-02-28",
-      status: "active"
+      amount: createBigNumber(userPosition.amountStaked).toFormat(2),
+      lockPeriod: userPosition.lockPeriodDays,
+      boost: userPosition.boost,
+      unlockDate: userPosition.unlockDate.toISOString().split('T')[0],
+      status: "active",
+      isUnlockable: userPosition.isUnlockable,
+      rawAmount: userPosition.amountStaked
     }
-  ];
+  ] : [];
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  const isUnlockable = (unlockDate) => {
-    return new Date() >= new Date(unlockDate);
+  const handleUnstake = async (position) => {
+    try {
+      await unstakeGloop(position.rawAmount);
+    } catch (error) {
+      console.error("Unstaking failed:", error);
+    }
   };
 
   return (
@@ -118,7 +129,7 @@ export default function StakingRightPart() {
                     <div className="font-16 bold-300 color-gray">
                       <span className="mr-10">Total GLOOP Staked</span>
                     </div>
-                    <Skeleton loading={false} width="120px">
+                    <Skeleton loading={totalStakedLoading} width="120px">
                       <div className="font-16 bold-700 color-white text-end">
                         {stakingOverview.totalStaked} GLOOP
                       </div>
@@ -128,7 +139,7 @@ export default function StakingRightPart() {
                     <div className="font-16 bold-300 color-gray">
                       <span className="mr-10">Total Stakers</span>
                     </div>
-                    <Skeleton loading={false} width="80px">
+                    <Skeleton loading={totalStakersLoading} width="80px">
                       <div className="font-16 bold-700 color-white text-end">
                         {stakingOverview.totalStakers}
                       </div>
@@ -138,7 +149,7 @@ export default function StakingRightPart() {
                     <div className="font-16 bold-300 color-gray">
                       <span className="mr-10">Your Staked Amount</span>
                     </div>
-                    <Skeleton loading={false} width="120px">
+                    <Skeleton loading={userStakedLoading} width="120px">
                       <div className="font-16 bold-700 color-green text-end">
                         {stakingOverview.userStaked} GLOOP
                       </div>
@@ -148,7 +159,7 @@ export default function StakingRightPart() {
                     <div className="font-16 bold-300 color-gray">
                       <span className="mr-10">Your Current Boost</span>
                     </div>
-                    <Skeleton loading={false} width="80px">
+                    <Skeleton loading={userPositionLoading} width="80px">
                       <div className="font-16 bold-700 color-green text-end">
                         +{stakingOverview.userBoost}%
                       </div>
@@ -194,16 +205,15 @@ export default function StakingRightPart() {
                           </div>
                           <AsyncButton
                             className={`w-100 font-14 bold-600 radius-8 p-2 ${
-                              isUnlockable(position.unlockDate)
+                              position.isUnlockable
                                 ? "gloop-btn-primary bg-green border-green color-dark"
                                 : "gloop-btn-primary-gray-disable"
                             }`}
-                            disabled={!isUnlockable(position.unlockDate)}
-                            onClick={() => {
-                              console.log(`Unstaking position ${position.id}`);
-                            }}
+                            disabled={!position.isUnlockable || isUnstaking}
+                            loading={isUnstaking}
+                            onClick={() => handleUnstake(position)}
                           >
-                            {isUnlockable(position.unlockDate) ? "Unstake" : "Locked"}
+                            {isUnstaking ? "Unstaking..." : position.isUnlockable ? "Unstake" : "Locked"}
                           </AsyncButton>
                         </div>
                       ))}
@@ -221,7 +231,7 @@ export default function StakingRightPart() {
                     <div className="p-2">
                       <span className="font-14 bold-300 color-gray">Total GLOOP Staked</span>
                     </div>
-                    <Skeleton loading={false}>
+                    <Skeleton loading={totalStakedLoading}>
                       <div className="font-20 bold-700 color-white px-2 pb-2">
                         {stakingOverview.totalStaked} GLOOP
                       </div>
@@ -231,7 +241,7 @@ export default function StakingRightPart() {
                     <div className="p-2">
                       <span className="font-14 bold-300 color-gray">Total Stakers</span>
                     </div>
-                    <Skeleton loading={false}>
+                    <Skeleton loading={totalStakersLoading}>
                       <div className="font-20 bold-700 color-white px-2 pb-2">
                         {stakingOverview.totalStakers}
                       </div>
@@ -241,7 +251,7 @@ export default function StakingRightPart() {
                     <div className="p-2">
                       <span className="font-14 bold-300 color-gray">Your Staked Amount</span>
                     </div>
-                    <Skeleton loading={false}>
+                    <Skeleton loading={userStakedLoading}>
                       <div className="font-20 bold-700 color-green px-2 pb-2">
                         {stakingOverview.userStaked} GLOOP
                       </div>
@@ -251,7 +261,7 @@ export default function StakingRightPart() {
                     <div className="p-2">
                       <span className="font-14 bold-300 color-gray">Your Current Boost</span>
                     </div>
-                    <Skeleton loading={false}>
+                    <Skeleton loading={userPositionLoading}>
                       <div className="font-20 bold-700 color-green px-2 pb-2">
                         +{stakingOverview.userBoost}%
                       </div>
@@ -295,17 +305,16 @@ export default function StakingRightPart() {
                               </div>
                               <AsyncButton
                                 className={`font-14 bold-600 radius-8 p-2 ${
-                                  isUnlockable(position.unlockDate)
+                                  position.isUnlockable
                                     ? "gloop-btn-primary bg-green border-green color-dark"
                                     : "gloop-btn-primary-gray-disable"
                                 }`}
-                                disabled={!isUnlockable(position.unlockDate)}
-                                onClick={() => {
-                                  console.log(`Unstaking position ${position.id}`);
-                                }}
+                                disabled={!position.isUnlockable || isUnstaking}
+                                loading={isUnstaking}
+                                onClick={() => handleUnstake(position)}
                                 style={{minWidth: "100px"}}
                               >
-                                {isUnlockable(position.unlockDate) ? "Unstake" : "Locked"}
+                                {isUnstaking ? "Unstaking..." : position.isUnlockable ? "Unstake" : "Locked"}
                               </AsyncButton>
                             </div>
                           </div>

@@ -3,12 +3,14 @@ import {Row, Col, Container} from "react-bootstrap";
 import SidebarSocial from "../components/SidebarSoical";
 import StakingLeftPart from "../components/staking/StakingLeftPart";
 import StakingRightPart from "../components/staking/StakingRightPart";
-import stake_gmi_img from "../assets/img/stake_gmi_img.svg";
 import gmi_img2_url from "../assets/img/gmi_img2.svg";
 import {Link} from "react-router-dom";
-import env from "~/env";
+import useGetTotalStaked from "~/stores/server/staking/useGetTotalStaked";
+import Skeleton from "../components/Skeleton";
+import {createBigNumber} from "~/utils/math";
 
 export default function Staking() {
+  const {data: totalStaked, isLoading: totalStakedLoading} = useGetTotalStaked({});
   return (
     <div>
       <SidebarSocial />
@@ -49,7 +51,11 @@ export default function Staking() {
                 <div className="mt-4 my-2 mobile-show">
                   <div className="btn font-16 bold-400 radius-8 bg-trans-0 border-gray2 color-white p-10-25 my-2 min-w-200">
                     <span className="color-gray">Total Staked: </span>
-                    <span className="color-green">0 GLOOP</span>
+                    <Skeleton loading={totalStakedLoading} width="80px" height="16px" inline>
+                      <span className="color-green">
+                        {totalStaked ? createBigNumber(totalStaked).toFormat(0) : "0"} GLOOP
+                      </span>
+                    </Skeleton>
                   </div>
                 </div>
                 <div className="font-32 bold-700 color-white d-flex align-items-center my-2">
@@ -58,7 +64,11 @@ export default function Staking() {
                 <div className="my-2 desktop-show">
                   <div className="btn font-16 bold-400 radius-8 bg-trans-0 border-gray2 color-white p-10-25 my-2 min-w-200">
                     <span className="color-gray">Total Staked: </span>
-                    <span className="color-green">0 GLOOP</span>
+                    <Skeleton loading={totalStakedLoading} width="80px" height="16px" inline>
+                      <span className="color-green">
+                        {totalStaked ? createBigNumber(totalStaked).toFormat(0) : "0"} GLOOP
+                      </span>
+                    </Skeleton>
                   </div>
                 </div>
               </div>

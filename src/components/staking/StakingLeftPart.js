@@ -3,10 +3,17 @@ import {Row, Col} from "react-bootstrap";
 import AsyncButton from "~/components/AsyncButton";
 import AuthenticatedSection from "../AuthenticatedSection";
 import gloop_img1_url from "../../assets/img/gloop_img1.svg";
+import useGetGloopBalance from "~/stores/server/staking/useGetGloopBalance";
+import useStakeGloop from "~/stores/server/staking/useStakeGloop";
+import {createBigNumber} from "~/utils/math";
 
 export default function StakingLeftPart() {
   const [selectedLockPeriod, setSelectedLockPeriod] = useState(14);
   const [stakeAmount, setStakeAmount] = useState("");
+
+  // Hooks
+  const {data: gloopBalance, isLoading: gloopBalanceLoading} = useGetGloopBalance({});
+  const {mutateAsync: stakeGloop, isPending: isStaking} = useStakeGloop();
 
   const lockPeriods = [
     {
@@ -31,6 +38,28 @@ export default function StakingLeftPart() {
     return period ? period.boost : 0;
   };
 
+  const handleStaking = async () => {
+    if (!stakeAmount || parseFloat(stakeAmount) <= 0) return;
+    
+    try {
+      await stakeGloop({
+        amount: stakeAmount,
+        lockPeriodDays: selectedLockPeriod
+      });
+      setStakeAmount(""); // Clear the input after successful staking
+    } catch (error) {
+      console.error("Staking failed:", error);
+    }
+  };
+
+  const setMaxAmount = () => {
+    if (gloopBalance) {
+      setStakeAmount(gloopBalance);
+    }
+  };
+
+  const formattedBalance = gloopBalance ? createBigNumber(gloopBalance).toFormat(2) : "0";
+
   return (
     <>
       <Row className="">
@@ -40,13 +69,11 @@ export default function StakingLeftPart() {
               <div className="mt-4 my-2 d-flex flex-column" style={{gap: "8px"}}>
                 <AsyncButton
                   className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
-                  onClick={() => {
-                    // Handle staking logic
-                    console.log(`Staking ${stakeAmount} GLOOP for ${selectedLockPeriod} days`);
-                  }}
-                  disabled={!stakeAmount || parseFloat(stakeAmount) <= 0}
+                  onClick={handleStaking}
+                  disabled={!stakeAmount || parseFloat(stakeAmount) <= 0 || isStaking}
+                  loading={isStaking}
                 >
-                  Stake GLOOP
+                  {isStaking ? "Staking..." : "Stake GLOOP"}
                 </AsyncButton>
               </div>
             </div>
@@ -58,13 +85,11 @@ export default function StakingLeftPart() {
               <div className="my-2 d-flex" style={{gap: "8px"}}>
                 <AsyncButton
                   className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
-                  onClick={() => {
-                    // Handle staking logic
-                    console.log(`Staking ${stakeAmount} GLOOP for ${selectedLockPeriod} days`);
-                  }}
-                  disabled={!stakeAmount || parseFloat(stakeAmount) <= 0}
+                  onClick={handleStaking}
+                  disabled={!stakeAmount || parseFloat(stakeAmount) <= 0 || isStaking}
+                  loading={isStaking}
                 >
-                  Stake GLOOP
+                  {isStaking ? "Staking..." : "Stake GLOOP"}
                 </AsyncButton>
               </div>
             </div>
@@ -101,10 +126,11 @@ export default function StakingLeftPart() {
                     </div>
                   </div>
                   <div className="d-flex space-between">
-                    <span className="font-12 color-gray">Balance: 0 GLOOP</span>
+                    <span className="font-12 color-gray">Balance: {formattedBalance} GLOOP</span>
                     <button
                       className="btn max-btn font-12 color-green"
-                      onClick={() => setStakeAmount("0")} // Replace with actual balance
+                      onClick={setMaxAmount}
+                      disabled={gloopBalanceLoading || !gloopBalance}
                     >
                       MAX
                     </button>
@@ -153,7 +179,7 @@ export default function StakingLeftPart() {
                     <span className="font-14 color-white">{selectedLockPeriod} days</span>
                   </div>
                   <div className="d-flex space-between">
-                    <span className="font-14 color-gray">Boost:</span>
+                    <span className="font-14 color-gray">Point Boost:</span>
                     <span className="font-14 color-green">
                       +{getBoostForPeriod(selectedLockPeriod)}%
                     </span>
@@ -186,10 +212,11 @@ export default function StakingLeftPart() {
                     </div>
                   </div>
                   <div className="d-flex space-between">
-                    <span className="font-12 color-gray">Balance: 0 GLOOP</span>
+                    <span className="font-12 color-gray">Balance: {formattedBalance} GLOOP</span>
                     <button
                       className="btn max-btn font-12 color-green"
-                      onClick={() => setStakeAmount("0")} // Replace with actual balance
+                      onClick={setMaxAmount}
+                      disabled={gloopBalanceLoading || !gloopBalance}
                     >
                       MAX
                     </button>
@@ -232,7 +259,7 @@ export default function StakingLeftPart() {
                     <span className="font-14 color-white">{selectedLockPeriod} days</span>
                   </div>
                   <div className="d-flex space-between">
-                    <span className="font-14 color-gray">Boost:</span>
+                    <span className="font-14 color-gray">Point Boost:</span>
                     <span className="font-14 color-green">
                       +{getBoostForPeriod(selectedLockPeriod)}%
                     </span>
