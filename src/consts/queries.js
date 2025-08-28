@@ -53,5 +53,14 @@ export const queries = {
 
   // Incentives
   GET_ALL_USER_REWARDS: "get_all_user_rewards",
-  GET_APR: "get_apr"
+  GET_APR: "get_apr",
+
+  // Staking
+  GET_TOTAL_STAKED: "get_total_staked",
+  GET_TOTAL_STAKERS: "get_total_stakers",
+  GET_USER_STAKED_AMOUNT: "get_user_staked_amount",
+  GET_USER_STAKING_POSITIONS: "get_user_staking_positions",
+  GET_CLAIMABLE_REWARDS: "get_claimable_rewards",
+  GET_LOCK_PERIODS: "get_lock_periods",
+  GET_GLOOP_BALANCE: "get_gloop_balance"
 };
