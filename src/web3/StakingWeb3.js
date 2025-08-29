@@ -11,6 +11,7 @@ import {reopenToastLoading, toastDismiss, toastLoading} from "~/utils/toast";
 
 // Lock period constants (in seconds)
 export const LOCK_PERIODS = {
+  0: 0,
   14: 14 * 24 * 60 * 60,  // 14 days in seconds
   28: 28 * 24 * 60 * 60,  // 28 days in seconds
   56: 56 * 24 * 60 * 60   // 56 days in seconds
@@ -38,6 +39,12 @@ const getTotalStaked = async () => {
 const getTotalStakers = async () => {
   try {
     const [lockPeriod14, lockPeriod28, lockPeriod56] = await Promise.all([
+      readContract(config, {
+        abi: GloopStakingAbi.abi,
+        address: env.GLOOP_STAKING_CONTRACT_ADDRESS,
+        functionName: "lockPeriods",
+        args: [LOCK_PERIODS[0]]
+      }),
       readContract(config, {
         abi: GloopStakingAbi.abi,
         address: env.GLOOP_STAKING_CONTRACT_ADDRESS,
