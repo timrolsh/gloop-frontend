@@ -157,7 +157,7 @@ export default function StakingRightPart() {
                   </div>
                   <div className="d-flex v-center space-between">
                     <div className="font-16 bold-300 color-gray">
-                      <span className="mr-10">Your Current Boost</span>
+                      <span className="mr-10">Your Current Point Boost</span>
                     </div>
                     <Skeleton loading={userPositionLoading} width="80px">
                       <div className="font-16 bold-700 color-green text-end">
@@ -259,7 +259,7 @@ export default function StakingRightPart() {
                   </div>
                   <div className="d-flex flex-column space-between flex-grow-1">
                     <div className="p-2">
-                      <span className="font-14 bold-300 color-gray">Your Current Boost</span>
+                      <span className="font-14 bold-300 color-gray">Your Current Point Boost</span>
                     </div>
                     <Skeleton loading={userPositionLoading}>
                       <div className="font-20 bold-700 color-green px-2 pb-2">
