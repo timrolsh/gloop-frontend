@@ -9,6 +9,8 @@ import useGetTotalStaked from "~/stores/server/staking/useGetTotalStaked";
 import Skeleton from "../components/Skeleton";
 import {createBigNumber} from "~/utils/math";
 
+import parachute_url from "../assets/img/parachute.png";
+
 export default function Staking() {
   const {data: totalStaked, isLoading: totalStakedLoading} = useGetTotalStaked({});
   return (
@@ -20,7 +22,7 @@ export default function Staking() {
             <Col sm={9} className="w-75-100">
               <div className="desktop-flex v-center">
                 <div className="my-3 mr-20">
-                  <img src={"/assets/null.jpg"} width={62} />
+                  <img src={parachute_url} width={62} />
                 </div>
                 <div className="color-white font-16 my-3">
                   Stake your GLOOP tokens to earn rewards and boost your yield. Choose from 14-day,
