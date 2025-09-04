@@ -8,7 +8,7 @@ import useStakeGloop from "~/stores/server/staking/useStakeGloop";
 import {createBigNumber} from "~/utils/math";
 
 export default function StakingLeftPart() {
-  const [selectedLockPeriod, setSelectedLockPeriod] = useState(14);
+  const [selectedLockPeriod, setSelectedLockPeriod] = useState(0);
   const [stakeAmount, setStakeAmount] = useState("");
 
   // Hooks
@@ -17,19 +17,28 @@ export default function StakingLeftPart() {
 
   const lockPeriods = [
     {
+      days: 0,
+      boost: 10,
+      seconds: 0,
+      label: "No staking lock"
+    },
+    {
       days: 14,
       boost: 25,
-      seconds: 14 * 24 * 60 * 60
+      seconds: 14 * 24 * 60 * 60,
+      label: "Lock for 14 days"
     },
     {
       days: 28,
       boost: 50,
-      seconds: 28 * 24 * 60 * 60
+      seconds: 28 * 24 * 60 * 60,
+      label: "Lock for 28 days"
     },
     {
       days: 56,
       boost: 100,
-      seconds: 56 * 24 * 60 * 60
+      seconds: 56 * 24 * 60 * 60,
+      label: "Lock for 56 days"
     }
   ];
 
@@ -154,7 +163,7 @@ export default function StakingLeftPart() {
                         <div className="d-flex space-between v-center">
                           <div>
                             <div className="font-16 bold-500 color-white">{period.days} Days</div>
-                            <div className="font-14 color-gray">Lock for {period.days} days</div>
+                            <div className="font-14 color-gray">{period.label}</div>
                           </div>
                           <div className="text-end">
                             <div className="font-16 bold-600 color-green">
@@ -239,7 +248,7 @@ export default function StakingLeftPart() {
                       >
                         <div className="text-center">
                           <div className="font-16 bold-500 color-white">{period.days} Days</div>
-                          <div className="font-14 color-gray mb-2">Lock for {period.days} days</div>
+                          <div className="font-14 color-gray mb-2">{period.label}</div>
                           <div className="font-16 bold-600 color-green">+{period.boost}% Boost</div>
                         </div>
                       </div>

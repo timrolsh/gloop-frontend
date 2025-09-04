@@ -43,6 +43,7 @@ const useGetUserStakingPositions = ({enabled = true}) => {
   };
 
   const getLockBoostPercentage = (lockDurationSeconds) => {
+    if (lockDurationSeconds === LOCK_PERIODS[0]) return 10;
     if (lockDurationSeconds === LOCK_PERIODS[14]) return 25;
     if (lockDurationSeconds === LOCK_PERIODS[28]) return 50;
     if (lockDurationSeconds === LOCK_PERIODS[56]) return 100;

@@ -12,9 +12,9 @@ import {reopenToastLoading, toastDismiss, toastLoading} from "~/utils/toast";
 // Lock period constants (in seconds)
 export const LOCK_PERIODS = {
   0: 0,
-  14: 14 * 24 * 60 * 60,  // 14 days in seconds
-  28: 28 * 24 * 60 * 60,  // 28 days in seconds
-  56: 56 * 24 * 60 * 60   // 56 days in seconds
+  14: 14 * 24 * 60 * 60, // 14 days in seconds
+  28: 28 * 24 * 60 * 60, // 28 days in seconds
+  56: 56 * 24 * 60 * 60 // 56 days in seconds
 };
 
 /**
@@ -38,7 +38,7 @@ const getTotalStaked = async () => {
  */
 const getTotalStakers = async () => {
   try {
-    const [lockPeriod14, lockPeriod28, lockPeriod56] = await Promise.all([
+    const [lockPeriod0, lockPeriod14, lockPeriod28, lockPeriod56] = await Promise.all([
       readContract(config, {
         abi: GloopStakingAbi.abi,
         address: env.GLOOP_STAKING_CONTRACT_ADDRESS,
@@ -67,7 +67,7 @@ const getTotalStakers = async () => {
 
     // lockPeriods returns [apr, isActive, activeStakers]
     // We want the third element (activeStakers) from each
-    const totalStakers = lockPeriod14[2] + lockPeriod28[2] + lockPeriod56[2];
+    const totalStakers = lockPeriod0[2] + lockPeriod14[2] + lockPeriod28[2] + lockPeriod56[2];
     return totalStakers;
   } catch (error) {
     throw new Web3Exception("Getting Total Stakers Failed", {error});
