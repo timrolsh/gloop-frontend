@@ -54,6 +54,28 @@ export default function StakingRightPart() {
     }
   };
 
+  // Helper function to determine if unstaking is allowed
+  const canUnstake = (position) => {
+    // For no-lock positions (0 days), always allow unstaking
+    if (position.lockPeriod === 0) {
+      return true;
+    }
+    // For locked positions, only allow if the lock period has expired
+    return position.isUnlockable;
+  };
+
+  // Helper function to get the disabled reason for unstaking
+  const getUnstakeDisabledReason = (position) => {
+    if (isUnstaking) {
+      return "Transaction in progress...";
+    }
+    if (position.lockPeriod > 0 && !position.isUnlockable) {
+      const unlockDate = formatDate(position.unlockDate);
+      return `This position is locked until ${unlockDate}. You cannot unstake until the lock period expires.`;
+    }
+    return "";
+  };
+
   return (
     <>
       <Row className="">
@@ -203,18 +225,22 @@ export default function StakingRightPart() {
                               {formatDate(position.unlockDate)}
                             </span>
                           </div>
-                          <AsyncButton
-                            className={`w-100 font-14 bold-600 radius-8 p-2 ${
-                              position.isUnlockable
-                                ? "gloop-btn-primary bg-green border-green color-dark"
-                                : "gloop-btn-primary-gray-disable"
-                            }`}
-                            disabled={!position.isUnlockable || isUnstaking}
-                            loading={isUnstaking}
-                            onClick={() => handleUnstake(position)}
-                          >
-                            {isUnstaking ? "Unstaking..." : position.isUnlockable ? "Unstake" : "Locked"}
-                          </AsyncButton>
+                                                                                <AsyncButton
+                             className={`w-100 font-14 bold-600 radius-8 p-2 ${
+                               canUnstake(position) && !isUnstaking
+                                 ? "gloop-btn-primary bg-green border-green color-dark"
+                                 : "gloop-btn-primary-gray-disable"
+                             }`}
+                             disabledreason={!canUnstake(position) || isUnstaking ? getUnstakeDisabledReason(position) : ""}
+                             loading={isUnstaking}
+                             onClick={() => handleUnstake(position)}
+                           >
+                             {isUnstaking 
+                               ? "Unstaking..." 
+                               : canUnstake(position) 
+                                 ? "Unstake" 
+                                 : "Locked"}
+                           </AsyncButton>
                         </div>
                       ))}
                     </>
@@ -303,19 +329,23 @@ export default function StakingRightPart() {
                               <div className="text-end">
                                 <div className="font-14 color-green">+{position.boost}% Boost</div>
                               </div>
-                              <AsyncButton
-                                className={`font-14 bold-600 radius-8 p-2 ${
-                                  position.isUnlockable
-                                    ? "gloop-btn-primary bg-green border-green color-dark"
-                                    : "gloop-btn-primary-gray-disable"
-                                }`}
-                                disabled={!position.isUnlockable || isUnstaking}
-                                loading={isUnstaking}
-                                onClick={() => handleUnstake(position)}
-                                style={{minWidth: "100px"}}
-                              >
-                                {isUnstaking ? "Unstaking..." : position.isUnlockable ? "Unstake" : "Locked"}
-                              </AsyncButton>
+                               <AsyncButton
+                                 className={`font-14 bold-600 radius-8 p-2 ${
+                                   canUnstake(position) && !isUnstaking
+                                     ? "gloop-btn-primary bg-green border-green color-dark"
+                                     : "gloop-btn-primary-gray-disable"
+                                 }`}
+                                 disabledreason={!canUnstake(position) || isUnstaking ? getUnstakeDisabledReason(position) : ""}
+                                 loading={isUnstaking}
+                                 onClick={() => handleUnstake(position)}
+                                 style={{minWidth: "100px"}}
+                               >
+                                 {isUnstaking 
+                                   ? "Unstaking..." 
+                                   : canUnstake(position) 
+                                     ? "Unstake" 
+                                     : "Locked"}
+                               </AsyncButton>
                             </div>
                           </div>
                         ))}

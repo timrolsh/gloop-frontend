@@ -5,6 +5,7 @@ import AuthenticatedSection from "../AuthenticatedSection";
 import gloop_img1_url from "../../assets/img/gloop_img1.svg";
 import useGetGloopBalance from "~/stores/server/staking/useGetGloopBalance";
 import useStakeGloop from "~/stores/server/staking/useStakeGloop";
+import useGetUserStakingPositions from "~/stores/server/staking/useGetUserStakingPositions";
 import {createBigNumber} from "~/utils/math";
 
 export default function StakingLeftPart() {
@@ -14,6 +15,7 @@ export default function StakingLeftPart() {
   // Hooks
   const {data: gloopBalance, isLoading: gloopBalanceLoading} = useGetGloopBalance({});
   const {mutateAsync: stakeGloop, isPending: isStaking} = useStakeGloop();
+  const {data: userPosition} = useGetUserStakingPositions({});
 
   const lockPeriods = [
     {
@@ -68,6 +70,26 @@ export default function StakingLeftPart() {
   };
 
   const formattedBalance = gloopBalance ? createBigNumber(gloopBalance).toFormat(2) : "0";
+  
+  // Check if user already has an existing position (regardless of amount)
+  const hasExistingPosition = userPosition && parseFloat(userPosition.amountStaked) > 0;
+  
+  // Determine if staking should be disabled
+  const isStakingDisabled = !stakeAmount || parseFloat(stakeAmount) <= 0 || isStaking || hasExistingPosition;
+  
+  // Get disabled reason for tooltip
+  const getStakingDisabledReason = () => {
+    if (hasExistingPosition) {
+      return "You already have an active staking position. Please unstake your current position before creating a new one.";
+    }
+    if (!stakeAmount || parseFloat(stakeAmount) <= 0) {
+      return "Please enter a valid staking amount.";
+    }
+    if (isStaking) {
+      return "Transaction in progress...";
+    }
+    return "";
+  };
 
   return (
     <>
@@ -77,9 +99,13 @@ export default function StakingLeftPart() {
             <div className="mobile-show">
               <div className="mt-4 my-2 d-flex flex-column" style={{gap: "8px"}}>
                 <AsyncButton
-                  className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
+                  className={`font-16 bold-700 radius-8 p-10 min-w-200 ${
+                    isStakingDisabled
+                      ? "gloop-btn-primary-gray-disable"
+                      : "gloop-btn-primary bg-green border-green color-dark"
+                  }`}
                   onClick={handleStaking}
-                  disabled={!stakeAmount || parseFloat(stakeAmount) <= 0 || isStaking}
+                  disabledreason={isStakingDisabled ? getStakingDisabledReason() : ""}
                   loading={isStaking}
                 >
                   {isStaking ? "Staking..." : "Stake GLOOP"}
@@ -93,9 +119,13 @@ export default function StakingLeftPart() {
             <div className="desktop-show">
               <div className="my-2 d-flex" style={{gap: "8px"}}>
                 <AsyncButton
-                  className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
+                  className={`font-16 bold-700 radius-8 p-10 min-w-200 ${
+                    isStakingDisabled
+                      ? "gloop-btn-primary-gray-disable"
+                      : "gloop-btn-primary bg-green border-green color-dark"
+                  }`}
                   onClick={handleStaking}
-                  disabled={!stakeAmount || parseFloat(stakeAmount) <= 0 || isStaking}
+                  disabledreason={isStakingDisabled ? getStakingDisabledReason() : ""}
                   loading={isStaking}
                 >
                   {isStaking ? "Staking..." : "Stake GLOOP"}
@@ -125,13 +155,14 @@ export default function StakingLeftPart() {
                       onChange={(e) => setStakeAmount(e.target.value)}
                     />
                     <div className="d-flex v-center" style={{gap: "8px"}}>
-                      <img
-                        src={gloop_img1_url}
-                        width={24}
-                        height={24}
-                        className="radius-8"
-                      />
-                      <span className="font-16 bold-500 color-white">GLOOP</span>
+                                             <img
+                         src={gloop_img1_url}
+                         width={24}
+                         height={24}
+                         className="radius-8"
+                         alt="GLOOP token"
+                       />
+                       <span className="font-16 bold-500 color-white">GLOOP</span>
                     </div>
                   </div>
                   <div className="d-flex space-between">
@@ -211,13 +242,14 @@ export default function StakingLeftPart() {
                       onChange={(e) => setStakeAmount(e.target.value)}
                     />
                     <div className="d-flex v-center" style={{gap: "8px"}}>
-                      <img
-                        src={gloop_img1_url}
-                        width={24}
-                        height={24}
-                        className="radius-8"
-                      />
-                      <span className="font-16 bold-500 color-white">GLOOP</span>
+                                             <img
+                         src={gloop_img1_url}
+                         width={24}
+                         height={24}
+                         className="radius-8"
+                         alt="GLOOP token"
+                       />
+                       <span className="font-16 bold-500 color-white">GLOOP</span>
                     </div>
                   </div>
                   <div className="d-flex space-between">
