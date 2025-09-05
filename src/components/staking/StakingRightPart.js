@@ -25,22 +25,25 @@ export default function StakingRightPart() {
     totalStaked: totalStaked ? createBigNumber(totalStaked).toFormat(0) : "0",
     totalStakers: totalStakers ? totalStakers.toString() : "0",
     userStaked: userStakedAmount ? createBigNumber(userStakedAmount).toFormat(2) : "0",
-    userBoost: (userPosition && parseFloat(userPosition.amountStaked) > 0) ? userPosition.boost : "0"
+    userBoost: userPosition && parseFloat(userPosition.amountStaked) > 0 ? userPosition.boost : "0"
   };
 
   // Convert single position to array format for compatibility with existing UI
-  const userStakingPositions = userPosition && parseFloat(userPosition.amountStaked) > 0 ? [
-    {
-      id: 1,
-      amount: createBigNumber(userPosition.amountStaked).toFormat(2),
-      lockPeriod: userPosition.lockPeriodDays,
-      boost: userPosition.boost,
-      unlockDate: userPosition.unlockDate.toISOString().split('T')[0],
-      status: "active",
-      isUnlockable: userPosition.isUnlockable,
-      rawAmount: userPosition.amountStaked
-    }
-  ] : [];
+  const userStakingPositions =
+    userPosition && parseFloat(userPosition.amountStaked) > 0
+      ? [
+          {
+            id: 1,
+            amount: createBigNumber(userPosition.amountStaked).toFormat(2),
+            lockPeriod: userPosition.lockPeriodDays,
+            boost: userPosition.boost,
+            unlockDate: userPosition.unlockDate.toISOString().split("T")[0],
+            status: "active",
+            isUnlockable: userPosition.isUnlockable,
+            rawAmount: userPosition.amountStaked
+          }
+        ]
+      : [];
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
@@ -220,27 +223,37 @@ export default function StakingRightPart() {
                             <span className="font-14 color-white">{position.lockPeriod} days</span>
                           </div>
                           <div className="d-flex space-between mb-3">
-                            <span className="font-14 color-gray">Unlock Date:</span>
-                            <span className="font-14 color-white">
-                              {formatDate(position.unlockDate)}
+                            <span className="font-14 color-gray">Status:</span>
+                            <span
+                              className={`font-14 ${
+                                position.isUnlockable ? "color-green" : "color-white"
+                              }`}
+                            >
+                              {position.isUnlockable
+                                ? "Unlocked"
+                                : `Unlocks ${formatDate(position.unlockDate)}`}
                             </span>
                           </div>
-                                                                                <AsyncButton
-                             className={`w-100 font-14 bold-600 radius-8 p-2 ${
-                               canUnstake(position) && !isUnstaking
-                                 ? "gloop-btn-primary bg-green border-green color-dark"
-                                 : "gloop-btn-primary-gray-disable"
-                             }`}
-                             disabledreason={!canUnstake(position) || isUnstaking ? getUnstakeDisabledReason(position) : ""}
-                             loading={isUnstaking}
-                             onClick={() => handleUnstake(position)}
-                           >
-                             {isUnstaking 
-                               ? "Unstaking..." 
-                               : canUnstake(position) 
-                                 ? "Unstake" 
-                                 : "Locked"}
-                           </AsyncButton>
+                          <AsyncButton
+                            className={`w-100 font-14 bold-600 radius-8 p-2 ${
+                              canUnstake(position) && !isUnstaking
+                                ? "gloop-btn-primary bg-green border-green color-dark"
+                                : "gloop-btn-primary-gray-disable"
+                            }`}
+                            disabledreason={
+                              !canUnstake(position) || isUnstaking
+                                ? getUnstakeDisabledReason(position)
+                                : ""
+                            }
+                            loading={isUnstaking}
+                            onClick={() => handleUnstake(position)}
+                          >
+                            {isUnstaking
+                              ? "Unstaking..."
+                              : canUnstake(position)
+                              ? "Unstake"
+                              : "Locked"}
+                          </AsyncButton>
                         </div>
                       ))}
                     </>
@@ -321,31 +334,39 @@ export default function StakingRightPart() {
                                 {position.amount} GLOOP
                               </div>
                               <div className="font-14 color-gray">
-                                {position.lockPeriod} days • Unlocks{" "}
-                                {formatDate(position.unlockDate)}
+                                {position.lockPeriod} days •{" "}
+                                {position.isUnlockable ? (
+                                  <span className="color-green">Unlocked</span>
+                                ) : (
+                                  `Unlocks ${formatDate(position.unlockDate)}`
+                                )}
                               </div>
                             </div>
                             <div className="d-flex v-center" style={{gap: "16px"}}>
                               <div className="text-end">
                                 <div className="font-14 color-green">+{position.boost}% Boost</div>
                               </div>
-                               <AsyncButton
-                                 className={`font-14 bold-600 radius-8 p-2 ${
-                                   canUnstake(position) && !isUnstaking
-                                     ? "gloop-btn-primary bg-green border-green color-dark"
-                                     : "gloop-btn-primary-gray-disable"
-                                 }`}
-                                 disabledreason={!canUnstake(position) || isUnstaking ? getUnstakeDisabledReason(position) : ""}
-                                 loading={isUnstaking}
-                                 onClick={() => handleUnstake(position)}
-                                 style={{minWidth: "100px"}}
-                               >
-                                 {isUnstaking 
-                                   ? "Unstaking..." 
-                                   : canUnstake(position) 
-                                     ? "Unstake" 
-                                     : "Locked"}
-                               </AsyncButton>
+                              <AsyncButton
+                                className={`font-14 bold-600 radius-8 p-2 ${
+                                  canUnstake(position) && !isUnstaking
+                                    ? "gloop-btn-primary bg-green border-green color-dark"
+                                    : "gloop-btn-primary-gray-disable"
+                                }`}
+                                disabledreason={
+                                  !canUnstake(position) || isUnstaking
+                                    ? getUnstakeDisabledReason(position)
+                                    : ""
+                                }
+                                loading={isUnstaking}
+                                onClick={() => handleUnstake(position)}
+                                style={{minWidth: "100px"}}
+                              >
+                                {isUnstaking
+                                  ? "Unstaking..."
+                                  : canUnstake(position)
+                                  ? "Unstake"
+                                  : "Locked"}
+                              </AsyncButton>
                             </div>
                           </div>
                         ))}
