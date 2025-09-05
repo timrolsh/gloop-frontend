@@ -25,7 +25,7 @@ export default function StakingRightPart() {
     totalStaked: totalStaked ? createBigNumber(totalStaked).toFormat(0) : "0",
     totalStakers: totalStakers ? totalStakers.toString() : "0",
     userStaked: userStakedAmount ? createBigNumber(userStakedAmount).toFormat(2) : "0",
-    userBoost: userPosition?.boost || "0"
+    userBoost: (userPosition && parseFloat(userPosition.amountStaked) > 0) ? userPosition.boost : "0"
   };
 
   // Convert single position to array format for compatibility with existing UI
