@@ -223,7 +223,7 @@ const stakeGloop = async (amount, lockPeriodDays) => {
 
   try {
     const lockPeriodSeconds = LOCK_PERIODS[lockPeriodDays];
-    if (!lockPeriodSeconds) {
+    if (LOCK_PERIODS[lockPeriodDays] === undefined) {
       throw new Error(`Invalid lock period: ${lockPeriodDays} days`);
     }
 
@@ -242,7 +242,7 @@ const stakeGloop = async (amount, lockPeriodDays) => {
   } catch (error) {
     toastDismiss(toastId);
     throw new Web3Exception(
-      `Staking Failed: ${error.shortMessage || "Unknown Reason!"}`,
+      `Staking Failed: ${error.shortMessage || "Unknown Reason!"}, amount: ${amount}, lockPeriodDays: ${lockPeriodDays}, error: ${error}`,
       {amount, lockPeriodDays, error},
       {sendToast: true}
     );
