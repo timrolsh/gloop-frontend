@@ -1,6 +1,5 @@
 import {Row, Col} from "react-bootstrap";
 import Skeleton from "~/components/Skeleton";
-import AsyncButton from "~/components/AsyncButton";
 import useGetUserDetails from "~/stores/server/leaderboard/useGetUserDetails";
 import {truncateAmount, scalePoints} from "~/utils/ui";
 import AuthenticatedSection from "../AuthenticatedSection";
@@ -14,28 +13,9 @@ export default function Dashboard() {
         <Col sm={12}>
           <div className="space-between align-items-center my-2 desktop-flex">
             <div className="mobile-show">
-              <div className="mt-4 my-2 d-flex flex-column" style={{gap: "8px"}}>
-                <AsyncButton
-                  className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
-                  disabledreason={"Coming Soon"}
-                >
-                  Claim Points
-                </AsyncButton>
-              </div>
             </div>
             <div className="font-32 bold-700 color-white d-flex align-items-center my-4">
               My Dashboard
-            </div>
-
-            <div className="desktop-show">
-              <div className="my-2 d-flex" style={{gap: "8px"}}>
-                <AsyncButton
-                  className="gloop-btn-primary font-16 bold-700 radius-8 bg-green border-green color-dark p-10 min-w-200"
-                  disabledreason={"Coming Soon"}
-                >
-                  Claim Points
-                </AsyncButton>
-              </div>
             </div>
           </div>
         </Col>
