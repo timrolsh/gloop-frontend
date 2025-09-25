@@ -1,15 +1,6 @@
 import env from "~/env";
 import {toastSuccess} from "./toast";
 
-export const scalePoints = (points) => {
-  if (!points || points === env.EMPTY_VALUE) return points;
-  
-  const numericPoints = parseFloat(points);
-  if (isNaN(numericPoints)) return points;
-  
-  return Math.floor(numericPoints / 1000);
-};
-
 export const formatStakingBoost = (stakingBoost) => {
   if (!stakingBoost || stakingBoost === env.EMPTY_VALUE) return "0";
   

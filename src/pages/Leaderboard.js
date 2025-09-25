@@ -8,7 +8,7 @@ import leaderboard_img4_url from "../assets/img/leaderboard_img4.png";
 import LeaderboardTable from "../components/leaderboard/LeaderboardTable";
 import useGetLeaderboard from "~/stores/server/leaderboard/useGetLeaderboard";
 import Skeleton from "~/components/Skeleton";
-import {truncateAmount, scalePoints} from "~/utils/ui";
+import {truncateAmount} from "~/utils/ui";
 import Dashboard from "~/components/dashboard/Dashboard";
 
 export default function Leaderboard() {
@@ -104,7 +104,7 @@ export default function Leaderboard() {
                     </div>
                   </div>
                   <div className="font-20 bold-700 color-white px-2 pb-2">
-                    {truncateAmount(scalePoints(leaderboardQuery?.data?.totalPoints))}
+                    {truncateAmount(leaderboardQuery?.data?.totalPoints)}
                   </div>
                 </div>
               </Skeleton>
