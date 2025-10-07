@@ -22,21 +22,26 @@ const useGetUserStakingPositions = ({enabled = true}) => {
     const [amountStaked, , rewardsUSDC, rewardsGLOOP, lastUpdateTime, lockEndTime, lockDuration] = position;
     
     // Convert bigints to numbers/strings for easier use
+    const currentTimeSeconds = Date.now() / 1000;
+    const lockEndTimestamp = Number(lockEndTime);
+    const lockDurationSeconds = Number(lockDuration);
+    const stakedAmount = parseFloat(formatEther(amountStaked));
+    
     const formattedPosition = {
       amountStaked: formatEther(amountStaked),
       rewardsUSDC: formatUnits(rewardsUSDC, 6), // USDC has 6 decimals
       rewardsGLOOP: formatEther(rewardsGLOOP),
       lastUpdateTime: Number(lastUpdateTime),
-      lockEndTime: Number(lockEndTime),
-      lockDuration: Number(lockDuration),
+      lockEndTime: lockEndTimestamp,
+      lockDuration: lockDurationSeconds,
       // Calculate lock period in days
-      lockPeriodDays: Number(lockDuration) / (24 * 60 * 60),
+      lockPeriodDays: lockDurationSeconds / (24 * 60 * 60),
       // Calculate if position is unlockable
-      isUnlockable: Date.now() / 1000 >= Number(lockEndTime),
+      isUnlockable: currentTimeSeconds >= lockEndTimestamp,
       // Calculate unlock date
-      unlockDate: new Date(Number(lockEndTime) * 1000),
-      // Calculate boost based on lock duration
-      boost: getLockBoostPercentage(Number(lockDuration))
+      unlockDate: new Date(lockEndTimestamp * 1000),
+      // Calculate boost based on lock duration and expiry status
+      boost: getActiveBoostPercentage(stakedAmount, currentTimeSeconds, lockEndTimestamp, lockDurationSeconds)
     };
     
     return formattedPosition;
@@ -48,6 +53,17 @@ const useGetUserStakingPositions = ({enabled = true}) => {
     if (lockDurationSeconds === LOCK_PERIODS[28]) return 50;
     if (lockDurationSeconds === LOCK_PERIODS[56]) return 100;
     return 0;
+  };
+
+  const getActiveBoostPercentage = (stakedAmount, currentTimeSeconds, lockEndTime, lockDurationSeconds) => {
+    // No stake or unstaked position -> 0% boost
+    if (stakedAmount <= 0) return 0;
+    
+    // Stake is active but lock has expired -> 10% boost (unlocked staking)
+    if (currentTimeSeconds >= lockEndTime) return 10;
+    
+    // Stake is active and lock is still valid -> use the boost multiplier for the lock duration
+    return getLockBoostPercentage(lockDurationSeconds);
   };
 
   return useQuery({
