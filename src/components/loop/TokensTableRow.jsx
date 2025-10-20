@@ -5,6 +5,7 @@ import Skeleton from "../Skeleton";
 import {createBigNumber} from "~/utils/math";
 import {DATAMODES} from "~/consts/enums";
 import useGetTotalUnderlying from "~/stores/server/lend/useGetTotalUnderlying";
+import useGetConfigurations from "~/stores/server/core/useGetConfigurations";
 
 export default function CollateralTokensTableRow({token, displayHr, onRowClick, mode, isLoading}) {
   const handleRowClicked = () => {
@@ -12,6 +13,9 @@ export default function CollateralTokensTableRow({token, displayHr, onRowClick, 
   };
 
   const totalUnderlyingQuery = useGetTotalUnderlying({token});
+  const {data: configurationData, isLoading: isLoadingConfiguration} = useGetConfigurations({
+    token
+  });
 
   const clickable = useMemo(() => {
     return typeof onRowClick === "function";
@@ -60,6 +64,11 @@ export default function CollateralTokensTableRow({token, displayHr, onRowClick, 
 
     return result;
   }, [token.price, token.totalBorrows, token.userBorrows]);
+
+  const ltv = useMemo(() => {
+    if (!configurationData?.lendFactor) return env.EMPTY_VALUE;
+    return (configurationData.lendFactor * 100).toFixed(2);
+  }, [configurationData]);
 
   return (
     <>
@@ -110,6 +119,14 @@ export default function CollateralTokensTableRow({token, displayHr, onRowClick, 
         </td>
 
         <td>
+          <Skeleton loading={isLoadingConfiguration || ltv === env.EMPTY_VALUE}>
+            <span className="font-16 bold-600 text-loop-primary">
+              {ltv === env.EMPTY_VALUE ? "N/A" : `${ltv}%`}
+            </span>
+          </Skeleton>
+        </td>
+
+        <td>
           <Skeleton loading={isLoading || token.supplyApy === env.EMPTY_VALUE}>
             <span className="apy-rate apy-rate font-16 bold-600">
               {token.supplyApy === env.EMPTY_VALUE
@@ -134,7 +151,7 @@ export default function CollateralTokensTableRow({token, displayHr, onRowClick, 
 
       {displayHr ? (
         <tr>
-          <td className="p-0" colSpan={6}>
+          <td className="p-0" colSpan={7}>
             <hr className="hr-1 border-dark-green m-0" />
           </td>
         </tr>

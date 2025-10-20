@@ -38,6 +38,7 @@ export default function CollateralTokensTable({onRowClick, mode}) {
           <th className="color-gray font-14 bold-300 px-2">Price</th>
           <th className="color-gray font-14 bold-300 px-2">Supply</th>
           <th className="color-gray font-14 bold-300 px-2">Borrow</th>
+          <th className="color-gray font-14 bold-300 px-2">LTV</th>
           <th className="color-gray font-14 bold-300 px-2">Supply APY</th>
           <th className="color-gray font-14 bold-300 px-2">Borrow APY</th>
         </tr>
@@ -56,7 +57,7 @@ export default function CollateralTokensTable({onRowClick, mode}) {
           ))
         ) : (
           <tr>
-            <td colSpan={6} style={{textAlign: "center"}}>
+            <td colSpan={7} style={{textAlign: "center"}}>
               <p className="color-gray1 font-14 bold-500 px-2">You have no collateral token</p>
             </td>
           </tr>
