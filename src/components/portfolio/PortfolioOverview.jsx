@@ -21,7 +21,7 @@ export default function PortfolioOverview() {
         className="border-3-bottom border-dark-green color-white font-18 bold-600"
         style={{paddingBottom: "18px"}}
       >
-        USDC Borrows
+        USDC Positions
       </div>
 
       <BorrowTokensTable onRowClick={setSelectedPosition} mode={DATAMODES.PORTFOLIO} />
