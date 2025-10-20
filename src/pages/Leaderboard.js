@@ -28,7 +28,7 @@ export default function Leaderboard() {
                 <div className="color-white font-16 my-2">
                   Earn points for participating in Gloop's growing ecosystem by lending USDC and
                   borrowing USDC. Current Rates and Boosts: Lending USDC: 2 points per dollar per
-                  day, Borrowing USDC: 1 point per dollar per day. Staking Boosts: 14 days - 25%, 28
+                  day, Borrowing USDC: 1 point per dollar per day. Staking Boosts: 0 days - 10%, 14 days - 25%, 28
                   days - 50%, 56 days - 100%.
                 </div>
               </div>
