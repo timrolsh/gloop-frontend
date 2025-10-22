@@ -295,7 +295,7 @@ export default function Home() {
               </div>
               <div className="font-32 bold-700 color-white mb-3 text-center">Built to Boost</div>
               <div className="color-gray font-16 mt-3 text-center px-5">
-                GMI includes gmBTC, gmETH, gmSOL, and USDC-USDT SWAP. To maintain the index at its
+                GMI includes GM: BTC/USD [WBTC-USDC], GM: ETH/USD [WETH-USDC], GM: SOL/USD [WSOL-USDC], and GM: SWAP-ONLY [USDC-USDT]. To maintain the index at its
                 target weights, fees are adjusted in response to variations in the targeted pool
                 weights.
               </div>
@@ -426,7 +426,7 @@ export default function Home() {
                         target="_blank"
                         className="green-link" rel="noreferrer"
                       >
-                        Uniswap V4 DEX.
+                        Buy on Uniswap
                       </a>
                     </Accordion.Body>
                   </Accordion.Item>

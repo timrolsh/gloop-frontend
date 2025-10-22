@@ -66,7 +66,7 @@ export const useGMXDeposit = ({token}) => {
               abi: ExchangeRouter.abi,
               functionName: "sendTokens",
               args: [
-                token?.name == "USDC-USDT" ? token?.initialLongToken : token?.initialShortToken,
+                token?.name == "GM: SWAP-ONLY [USDC-USDT]" ? token?.initialLongToken : token?.initialShortToken,
                 GMX_DEPOSIT_VAULT_ADDRESS,
                 parsedAmount
               ]

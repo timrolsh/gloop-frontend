@@ -28,7 +28,7 @@ const getTokensList = () => {
   return [
     {
       image: gmETHIcon,
-      name: "gmETH",
+      name: "GM: ETH/USD [WETH-USDC]",
       address: env.ETH_TOKEN_ADDRESS,
       price: env.EMPTY_VALUE,
       availableLiquidity: env.EMPTY_VALUE,
@@ -65,7 +65,7 @@ const getTokensList = () => {
     },
     {
       image: gmBTCIcon,
-      name: "gmBTC",
+      name: "GM: BTC/USD [WBTC-USDC]",
       address: env.BTC_TOKEN_ADDRESS,
       price: env.EMPTY_VALUE,
       availableLiquidity: env.EMPTY_VALUE,
@@ -102,7 +102,7 @@ const getTokensList = () => {
     },
     {
       image: gmSOLIcon,
-      name: "gmSOL",
+      name: "GM: SOL/USD [WSOL-USDC]",
       address: env.SOL_TOKEN_ADDRESS,
       price: env.EMPTY_VALUE,
       availableLiquidity: env.EMPTY_VALUE,
@@ -172,7 +172,7 @@ const getTokensList = () => {
     },
     {
       image: USDCIcon,
-      name: "USDC-USDT",
+      name: "GM: SWAP-ONLY [USDC-USDT]",
       address: env.USDC_USDT_TOKEN_ADDRESS,
       price: env.EMPTY_VALUE,
       availableLiquidity: env.EMPTY_VALUE,
