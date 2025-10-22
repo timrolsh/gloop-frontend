@@ -129,6 +129,16 @@ export default function GMIDetails() {
                 ${truncateAmount(totalValue, 2)}
               </div>
             </Skeleton>
+            <div className="mt-2">
+              <a
+                href="https://app.gmx.io/#/pools"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-14 green-link"
+              >
+                Buy GM Tokens
+              </a>
+            </div>
           </div>
         </div>
       </AuthenticatedSection>
