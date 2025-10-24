@@ -48,3 +48,29 @@ export const copyToClipboard = (text, onCopy = (text) => {}) => {
   toastSuccess("Copied to clipboard");
   onCopy(text);
 };
+
+/**
+ * Extracts the short name from a GM token (without bracketed part)
+ * e.g., "GM: ETH/USD [WETH-USDC]" -> "GM: ETH/USD"
+ * @param {string} tokenName - The full token name
+ * @returns {string} - The short name without brackets
+ */
+export const getTokenShortName = (tokenName) => {
+  if (!tokenName) return "";
+  const bracketIndex = tokenName.indexOf("[");
+  if (bracketIndex === -1) return tokenName;
+  return tokenName.substring(0, bracketIndex).trim();
+};
+
+/**
+ * Extracts the bracketed part from a GM token name
+ * e.g., "GM: ETH/USD [WETH-USDC]" -> "[WETH-USDC]"
+ * @param {string} tokenName - The full token name
+ * @returns {string} - The bracketed part or empty string if not found
+ */
+export const getTokenBracketedPart = (tokenName) => {
+  if (!tokenName) return "";
+  const bracketIndex = tokenName.indexOf("[");
+  if (bracketIndex === -1) return "";
+  return tokenName.substring(bracketIndex).trim();
+};

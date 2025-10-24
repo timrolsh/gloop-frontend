@@ -1,6 +1,6 @@
 import {useMemo} from "react";
 import env from "~/env";
-import {truncateAmount} from "~/utils/ui";
+import {truncateAmount, getTokenShortName, getTokenBracketedPart} from "~/utils/ui";
 import Skeleton from "../Skeleton";
 import {createBigNumber} from "~/utils/math";
 import {DATAMODES} from "~/consts/enums";
@@ -33,12 +33,12 @@ export default function CollateralTokensTableRow({token, displayHr, onRowClick, 
     if (value === env.EMPTY_VALUE || totalUnderlyingQuery.isLoading) return result;
 
     result.value = value;
-    result.displayValue = `${truncateAmount(value)} ${token.name}`;
+    result.displayValue = `${truncateAmount(value)} ${getTokenShortName(token.name)}`;
     if (token.price !== env.EMPTY_VALUE)
       result.convertedValue = createBigNumber(value).mul(token.price).toFixed(token.decimals);
 
     return result;
-  }, [token.price, token.userPoolBalance, totalUnderlyingQuery]);
+  }, [token.price, token.userPoolBalance, token.decimals, token.name, totalUnderlyingQuery, mode]);
 
   const borrow = useMemo(() => {
     const result = {
@@ -57,13 +57,13 @@ export default function CollateralTokensTableRow({token, displayHr, onRowClick, 
     if (value === env.EMPTY_VALUE) return result;
 
     result.value = value;
-    result.displayValue = `${truncateAmount(value)} ${token.name}`;
+    result.displayValue = `${truncateAmount(value)} ${getTokenShortName(token.name)}`;
 
     if (token.price !== env.EMPTY_VALUE)
       result.convertedValue = createBigNumber(value).mul(token.price).toFixed(token.decimals);
 
     return result;
-  }, [token.price, token.totalBorrows, token.userBorrows]);
+  }, [token.price, token.totalBorrows, token.userBorrows, token.borrowable, token.decimals, token.name, mode]);
 
   const ltv = useMemo(() => {
     if (!configurationData?.lendFactor) return env.EMPTY_VALUE;
@@ -77,8 +77,13 @@ export default function CollateralTokensTableRow({token, displayHr, onRowClick, 
         onClick={handleRowClicked}
       >
         <td className="d-flex gap-3 align-items-center">
-          <img src={token.image} width={37} className="mr-8 to_gmi_dropdown_btn" />
-          <span className="color-white font-16 bold-600">{token.name}</span>
+          <img src={token.image} width={37} className="mr-8 to_gmi_dropdown_btn" alt={token.name} />
+          <div className="d-flex flex-column">
+            <span className="color-white font-16 bold-600">{getTokenShortName(token.name)}</span>
+            {getTokenBracketedPart(token.name) && (
+              <span className="color-gray font-14">{getTokenBracketedPart(token.name)}</span>
+            )}
+          </div>
         </td>
 
         <td>

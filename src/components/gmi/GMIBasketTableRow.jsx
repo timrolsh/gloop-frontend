@@ -1,5 +1,5 @@
 import env from "~/env";
-import {truncateAmount} from "~/utils/ui";
+import {truncateAmount, getTokenShortName} from "~/utils/ui";
 import Skeleton from "../Skeleton";
 import {useMemo} from "react";
 import {createBigNumber} from "~/utils/math";
@@ -38,8 +38,8 @@ export default function GMIBasketTableRow({token, card}) {
       {!card ? (
         <tr className={`py-3 market-list-table-row`}>
           <td className="d-flex gap-3 align-items-center">
-            <img src={token.image} width={37} className="mr-8 to_gmi_dropdown_btn" />
-            <span className="color-white font-16 bold-600">{token.name}</span>
+            <img src={token.image} width={37} className="mr-8 to_gmi_dropdown_btn" alt={token.name} />
+            <span className="color-white font-16 bold-600">{getTokenShortName(token.name)}</span>
           </td>
 
           <td>
@@ -94,8 +94,8 @@ export default function GMIBasketTableRow({token, card}) {
             <div className="d-flex space-between">
               <div className="color-gray font-14 bold-300  py-2">Asset</div>
               <div className="py-2">
-                <img src={token.image} width={22} className="mr-10" />
-                <span className="color-white font-14 bold-700 ">{token.name}</span>
+                <img src={token.image} width={22} className="mr-10" alt={token.name} />
+                <span className="color-white font-14 bold-700 ">{getTokenShortName(token.name)}</span>
               </div>
             </div>
 

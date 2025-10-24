@@ -5,7 +5,7 @@ import env from "~/env";
 import {ValidationException} from "~/consts/exceptions";
 
 import {createBigNumber} from "~/utils/math";
-import {truncateAmount} from "~/utils/ui";
+import {truncateAmount, getTokenShortName} from "~/utils/ui";
 
 import useGetTotalBorrows from "~/stores/server/borrow/useGetTotalBorrows";
 import useLendWithdraw from "~/stores/server/lend/useLendWithdraw";
@@ -66,7 +66,7 @@ export default function PositionWithdrawModal({position, onClose = () => {}}) {
   const size = useMemo(() => {
     if (position.userPoolBalance === env.EMPTY_VALUE) return env.EMPTY_VALUE;
 
-    let size = `${truncateAmount(position.userPoolBalance)} ${position.name}`;
+    let size = `${truncateAmount(position.userPoolBalance)} ${getTokenShortName(position.name)}`;
 
     if (position.price !== env.EMPTY_VALUE) {
       const sizeInUSD = createBigNumber(position.price).mul(position.userPoolBalance).toString();
@@ -74,7 +74,7 @@ export default function PositionWithdrawModal({position, onClose = () => {}}) {
     }
 
     return size;
-  }, [position.userPoolBalance]);
+  }, [position.userPoolBalance, position.name]);
 
   const remainingSize = useMemo(() => {
     if (position.userPoolBalance === env.EMPTY_VALUE) return env.EMPTY_VALUE;
@@ -86,7 +86,7 @@ export default function PositionWithdrawModal({position, onClose = () => {}}) {
     let remaining = createBigNumber(position.userPoolBalance).minus(wantToWithdraw).toString();
     remaining = createBigNumber(remaining).lt(0) ? 0 : remaining;
 
-    let returnValue = `${truncateAmount(remaining)} ${position.name}`;
+    let returnValue = `${truncateAmount(remaining)} ${getTokenShortName(position.name)}`;
 
     if (position.price !== env.EMPTY_VALUE) {
       const remainingInUSD = createBigNumber(position.price).mul(remaining).toString();
@@ -94,7 +94,7 @@ export default function PositionWithdrawModal({position, onClose = () => {}}) {
     }
 
     return returnValue;
-  }, [position.userPoolBalance, amount]);
+  }, [position.userPoolBalance, position.name, amount]);
 
   const buttonDisabledReason = useMemo(() => {
     if (!amount || createBigNumber(amount).lte(0)) return "Fill Withdraw Amount First";
@@ -185,7 +185,7 @@ export default function PositionWithdrawModal({position, onClose = () => {}}) {
             <div className="text-end">
               <Skeleton loading={maxWithdrawAbleQuery.isLoading} width="80px">
                 <div className="font-16 bold-700 color-white my-2">
-                  {truncateAmount(maxWithdrawAbleQuery.data)} {position.name}
+                  {truncateAmount(maxWithdrawAbleQuery.data)} {getTokenShortName(position.name)}
                 </div>
               </Skeleton>
             </div>
@@ -212,9 +212,9 @@ export default function PositionWithdrawModal({position, onClose = () => {}}) {
             <div className="w-95-100 d-flex v-center my-1 mr-10">
               {position ? (
                 <>
-                  <img src={position?.image} width={29} className="mr-10" />
+                  <img src={position?.image} width={29} className="mr-10" alt={position?.name} />
                   <PriceInput amount={amount} setAmount={setAmount} />{" "}
-                  <span className="font-18 bold-400 color-gray mr-10"> {position?.name || ""}</span>
+                  <span className="font-18 bold-400 color-gray mr-10"> {getTokenShortName(position?.name || "")}</span>
                 </>
               ) : null}
             </div>

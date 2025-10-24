@@ -1,7 +1,7 @@
 import {useMemo, useState} from "react";
 import {Button} from "react-bootstrap";
 import usePortfolioStore from "~/stores/client/portfolio";
-import {truncateAmount} from "~/utils/ui";
+import {truncateAmount, getTokenShortName, getTokenBracketedPart} from "~/utils/ui";
 
 import env from "~/env";
 import {createBigNumber} from "~/utils/math";
@@ -60,7 +60,7 @@ export default function PositionSingle() {
     if (selectedPosition.userPoolBalance === env.EMPTY_VALUE) return env.EMPTY_VALUE;
 
     if (selectedPosition.price === env.EMPTY_VALUE)
-      return `${truncateAmount(selectedPosition.userPoolBalance)} ${selectedPosition.name}`;
+      return `${truncateAmount(selectedPosition.userPoolBalance)} ${getTokenShortName(selectedPosition.name)}`;
 
     return `$${truncateAmount(
       createBigNumber(selectedPosition.price).mul(selectedPosition.userPoolBalance).toString(),
@@ -72,7 +72,7 @@ export default function PositionSingle() {
     if (selectedPosition.userBorrows === env.EMPTY_VALUE) return env.EMPTY_VALUE;
 
     if (selectedPosition.price === env.EMPTY_VALUE)
-      return `${truncateAmount(selectedPosition.userBorrows.toString())} ${selectedPosition.name}`;
+      return `${truncateAmount(selectedPosition.userBorrows.toString())} ${getTokenShortName(selectedPosition.name)}`;
 
     return `$${truncateAmount(
       createBigNumber(selectedPosition.price).mul(selectedPosition.userBorrows).toString(),
@@ -96,9 +96,16 @@ export default function PositionSingle() {
         <div className="information-card position-information-card mt-4">
           <div className="align-items-center">
             <div className="d-flex align-items-center" style={{gap: "10px"}}>
-              <img src={selectedPosition.image} width={37} className="mr-8 to_gmi_dropdown_btn" />
-              <div className="font-18 bold-700 color-white to_gmi_dropdown_btn1">
-                {selectedPosition.name}
+              <img src={selectedPosition.image} width={37} className="mr-8 to_gmi_dropdown_btn" alt={selectedPosition.name} />
+              <div className="d-flex flex-column">
+                <div className="font-18 bold-700 color-white to_gmi_dropdown_btn1">
+                  {getTokenShortName(selectedPosition.name)}
+                </div>
+                {getTokenBracketedPart(selectedPosition.name) && (
+                  <div className="font-14 color-gray">
+                    {getTokenBracketedPart(selectedPosition.name)}
+                  </div>
+                )}
               </div>
               <div className="info-price" title={selectedPosition.price}>
                 ${truncateAmount(selectedPosition.price, 2)}
@@ -125,7 +132,7 @@ export default function PositionSingle() {
                         title={`${selectedPosition.userPoolBalance}`}
                       >
                         +{truncateAmount(selectedPosition.userPoolBalance, 2)}{" "}
-                        {selectedPosition.name}
+                        {getTokenShortName(selectedPosition.name)}
                       </span>
                     </Skeleton>
                   </div>
@@ -174,7 +181,7 @@ export default function PositionSingle() {
                         title={`${selectedPosition.userBorrows.toString()}`}
                       >
                         +{truncateAmount(selectedPosition.userBorrows.toString())}{" "}
-                        {selectedPosition.name}
+                        {getTokenShortName(selectedPosition.name)}
                       </span>
                     </Skeleton>
                   </div>

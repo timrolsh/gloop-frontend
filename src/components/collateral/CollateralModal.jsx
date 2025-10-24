@@ -1,8 +1,9 @@
-import {useMemo, useState} from "react";
-import {Modal, Button} from "react-bootstrap";
+import {useMemo} from "react";
+import {Modal} from "react-bootstrap";
 import env from "~/env";
 import useGetHypotheticalHealthFactor from "~/stores/server/core/useGetHypotheticalHealthFactor";
 import {createBigNumber} from "~/utils/math";
+import {getTokenShortName} from "~/utils/ui";
 import AsyncButton from "../AsyncButton";
 
 import HealthFactor from "../health-factor/HealthFactor";
@@ -68,7 +69,9 @@ export default function CollateralModal({
           <div className={`d-flex flex-column mt-2`}>
             <div className="d-flex space-between">
               <span className="font-16 bold-300 color-gray my-2">Asset</span>
-              <div className="font-16 bold-700 color-white my-2">{token.name}</div>
+              <div className="font-16 bold-700 color-white my-2">
+                {getTokenShortName(token.name)}
+              </div>
             </div>
 
             <div className="d-flex space-between">

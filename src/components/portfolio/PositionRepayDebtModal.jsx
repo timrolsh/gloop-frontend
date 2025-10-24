@@ -2,7 +2,7 @@ import {useMemo, useState} from "react";
 import {Button, Modal} from "react-bootstrap";
 import env from "~/env";
 import {createBigNumber} from "~/utils/math";
-import {truncateAmount} from "~/utils/ui";
+import {truncateAmount, getTokenShortName} from "~/utils/ui";
 import Skeleton from "../Skeleton";
 import PriceInput from "../PriceInput";
 import {ValidationException} from "~/consts/exceptions";
@@ -45,7 +45,7 @@ export default function PositionRepayDebtModal({position, onClose = () => {}}) {
   const debt = useMemo(() => {
     if (position.userBorrows === env.EMPTY_VALUE) return env.EMPTY_VALUE;
 
-    let debt = `${truncateAmount(position.userBorrows)} ${position.name}`;
+    let debt = `${truncateAmount(position.userBorrows)} ${getTokenShortName(position.name)}`;
 
     if (position.price !== env.EMPTY_VALUE) {
       const debtInUSD = createBigNumber(position.price).mul(position.userBorrows).toString();
@@ -53,7 +53,7 @@ export default function PositionRepayDebtModal({position, onClose = () => {}}) {
     }
 
     return debt;
-  }, [position.userBorrows]);
+  }, [position.userBorrows, position.name]);
 
   const remainingDebt = useMemo(() => {
     if (position.userBorrows === env.EMPTY_VALUE) return env.EMPTY_VALUE;
@@ -65,7 +65,7 @@ export default function PositionRepayDebtModal({position, onClose = () => {}}) {
     let remaining = createBigNumber(position.userBorrows).minus(wantToRepay).toString();
     remaining = createBigNumber(remaining).lt(0) ? 0 : remaining;
 
-    let returnValue = `${truncateAmount(remaining)} ${position.name}`;
+    let returnValue = `${truncateAmount(remaining)} ${getTokenShortName(position.name)}`;
 
     if (position.price !== env.EMPTY_VALUE) {
       const remainingInUSD = createBigNumber(position.price).mul(remaining).toString();
@@ -73,7 +73,7 @@ export default function PositionRepayDebtModal({position, onClose = () => {}}) {
     }
 
     return returnValue;
-  }, [position.userBorrows, amount]);
+  }, [position.userBorrows, position.name, amount]);
 
   const inputMax = useMemo(() => {
     return position.userBorrows;
@@ -151,7 +151,7 @@ export default function PositionRepayDebtModal({position, onClose = () => {}}) {
             >
               <span className="font-14 bold-400 color-gray">{`Balance: ${truncateAmount(
                 balanceQuery?.data?.toString()
-              )} ${position.name || ""}`}</span>
+              )} ${getTokenShortName(position.name || "")}`}</span>
             </Skeleton>
           </div>
         </div>
@@ -164,9 +164,9 @@ export default function PositionRepayDebtModal({position, onClose = () => {}}) {
             <div className="w-95-100 d-flex v-center my-1 mr-10">
               {position ? (
                 <>
-                  <img src={position?.image} width={29} className="mr-10" />
+                  <img src={position?.image} width={29} className="mr-10" alt={position?.name} />
                   <PriceInput amount={amount} setAmount={setAmount} />{" "}
-                  <span className="font-18 bold-400 color-gray mr-10"> {position?.name || ""}</span>
+                  <span className="font-18 bold-400 color-gray mr-10"> {getTokenShortName(position?.name || "")}</span>
                 </>
               ) : null}
             </div>

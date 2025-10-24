@@ -1,12 +1,10 @@
 import {useMemo, useState} from "react";
-import Info from "../Info";
 import {Collapse, Table} from "react-bootstrap";
-
 import Skeleton from "../Skeleton";
 import useGmiStore from "~/stores/client/gmi";
 import useGetDepositTokenBalance from "~/stores/server/lend/useGetDepositTokenBalance";
 import env from "~/env";
-import {truncateAmount} from "~/utils/ui";
+import {truncateAmount, getTokenShortName} from "~/utils/ui";
 import PriceInput from "../PriceInput";
 import useGetTokensList from "~/stores/server/core/useGetTokensList";
 import useGetLowestFeeToken from "~/stores/server/gmi/useGetDexLowestFeeToken";
@@ -29,10 +27,14 @@ export default function DexTokensDropdown({
   const lowestWithdrawFeeTokenQuery = useGetLowestFeeToken({withdrawal: true});
 
   const dexTokens = useMemo(() => {
-    return (tokenListQuery.data || []).filter((x) =>
-      withdrawal ? x.dexWithdrawable : x.dexDepositable
-    );
-  }, [tokenListQuery.data]);
+    return (tokenListQuery.data || []).filter((x) => {
+      // Filter based on withdrawal/deposit capability
+      const meetsCapability = withdrawal ? x.dexWithdrawable : x.dexDepositable;
+      // Exclude standalone USDC (keep GM tokens including SWAP-ONLY)
+      const isNotStandaloneUSDC = x.name !== "USDC";
+      return meetsCapability && isNotStandaloneUSDC;
+    });
+  }, [tokenListQuery.data, withdrawal]);
 
   const dollarValue = useMemo(() => {
     const price = selectedToken.name === "USDC" ? 1 : selectedToken.dexPrice;
@@ -115,7 +117,7 @@ export default function DexTokensDropdown({
                 id="tokenName"
                 onClick={() => setOpenDropDown(!openDropDown)}
               >
-                {selectedToken?.name}
+                {getTokenShortName(selectedToken?.name)}
               </div>
             </div>
             <div className="mt-2">
@@ -128,9 +130,10 @@ export default function DexTokensDropdown({
               >
                 <div
                   className="font-14 bold-300 color-gray"
-                  title={`$${balanceQuery.data} ${selectedToken.name}`}
+                  title={`$${balanceQuery.data} ${getTokenShortName(selectedToken.name)}`}
                 >
-                  Balance: {`${truncateAmount(balanceQuery.data)} ${selectedToken.name}`}
+                  Balance:{" "}
+                  {`${truncateAmount(balanceQuery.data)} ${getTokenShortName(selectedToken.name)}`}
                 </div>
               </Skeleton>
             </div>
@@ -158,8 +161,10 @@ export default function DexTokensDropdown({
                           onClick={() => handleChangeSelectedToken(token)}
                         >
                           <td className="border-left-radius-8 py-3">
-                            <img src={token.image} width={22} className="mr-10" />
-                            <span className="color-white font-16 bold-700 ">{token.name}</span>
+                            <img src={token.image} width={22} className="mr-10" alt={token.name} />
+                            <span className="color-white font-16 bold-700 ">
+                              {getTokenShortName(token.name)}
+                            </span>
                           </td>
 
                           {token.name === "USDC" ? (

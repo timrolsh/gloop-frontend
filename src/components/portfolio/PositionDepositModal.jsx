@@ -10,7 +10,7 @@ import {ValidationException, Web3Exception} from "~/consts/exceptions";
 import AsyncButton from "../AsyncButton";
 import useGetDepositTokenBalance from "~/stores/server/lend/useGetDepositTokenBalance";
 import useLendDeposit from "~/stores/server/lend/useLendDeposit";
-import {truncateAmount} from "~/utils/ui";
+import {truncateAmount, getTokenShortName} from "~/utils/ui";
 import HealthFactor from "../health-factor/HealthFactor";
 
 export default function PositionDepositModal({position, onClose = () => {}}) {
@@ -128,7 +128,7 @@ export default function PositionDepositModal({position, onClose = () => {}}) {
           >
             <span className="font-14 bold-400 color-gray">{`Balance: ${truncateAmount(
               balanceQuery?.data?.toString()
-            )} ${position.name || ""}`}</span>
+            )} ${getTokenShortName(position.name || "")}`}</span>
           </Skeleton>
         </div>
 
@@ -140,9 +140,9 @@ export default function PositionDepositModal({position, onClose = () => {}}) {
             <div className="w-95-100 d-flex v-center my-1 mr-10">
               {position ? (
                 <>
-                  <img src={position?.image} width={29} className="mr-10" />
+                  <img src={position?.image} width={29} className="mr-10" alt={position?.name} />
                   <PriceInput amount={amount} setAmount={setAmount} />{" "}
-                  <span className="font-18 bold-400 color-gray mr-10"> {position?.name || ""}</span>
+                  <span className="font-18 bold-400 color-gray mr-10"> {getTokenShortName(position?.name || "")}</span>
                 </>
               ) : null}
             </div>
