@@ -207,74 +207,43 @@ const fetchTotalBorrows = async (assetAddress) => {
   }
 };
 
-const getGloopGMIUniswapV4PoolState = async () => {
+const getGloopGMIUniswapV3PoolState = async () => {
   try {
-    // Uniswap V4 PoolManager address on Arbitrum
-    const UNISWAP_V4_POOL_MANAGER_ADDRESS = "0x360E68faCcca8cA495c1B759Fd9EEe466db9FB32";
+    // Uniswap V3 Pool address for GLOOP/GMI on Arbitrum
+    const GLOOP_GMI_V3_POOL_ADDRESS = "0x84ef1190ba2be3fadded470642520b7f8948aded";
     
-    const GLOOP_GMI_POOL_ID = "0x2a147981944315dbb1a2c20a66ed05b6ba29c848d32866739d2124a044c879e7";
+    // Import Uniswap V3 Pool ABI
+    const UniswapV3PoolAbi = await import('~/consts/abis/UniswapV3Pool.json');
     
-    // StateLibrary constants from the documentation
-    const POOLS_SLOT = 6; // uint256(6)
-    
-    // Calculate the storage slot for pools[poolId].slot0
-    // This follows the Solidity storage layout: keccak256(abi.encode(poolId, POOLS_SLOT))
-    const { keccak256, encodeAbiParameters } = await import('viem');
-    
-    const poolStateSlot = keccak256(
-      encodeAbiParameters(
-        [{ name: 'poolId', type: 'bytes32' }, { name: 'slot', type: 'uint256' }],
-        [GLOOP_GMI_POOL_ID, POOLS_SLOT]
-      )
-    );
-    
-    console.log("Calculated GLOOP/GMI pool state slot:", poolStateSlot);
-    
-    // Use extsload to read the slot0 data
+    // Call slot0 directly on the V3 pool
     const slot0Data = await readContract(config, {
-      abi: UniswapV4PoolManagerAbi.abi,
-      address: UNISWAP_V4_POOL_MANAGER_ADDRESS,
-      functionName: "extsload",
-      args: [poolStateSlot]
+      abi: UniswapV3PoolAbi.default,
+      address: GLOOP_GMI_V3_POOL_ADDRESS,
+      functionName: "slot0"
     });
     
-    
-    if (!slot0Data || slot0Data === "0x0000000000000000000000000000000000000000000000000000000000000000") {
-      console.log("No GLOOP/GMI pool data found in slot0");
+    if (!slot0Data || !Array.isArray(slot0Data)) {
+      console.log("No GLOOP/GMI V3 pool data found");
       return null;
     }
     
-    // Decode the packed slot0 data
-    // In Uniswap V4, slot0 contains packed data that needs proper extraction
-    // eslint-disable-next-line no-undef
-    const slot0BigInt = BigInt(slot0Data);
-    
-    // Extract sqrtPriceX96 (160 bits, rightmost)
-    const sqrtPriceX96 = slot0BigInt & ((1n << 160n) - 1n);
-    
-    // Extract tick (24 bits, signed)
-    const tickRaw = (slot0BigInt >> 160n) & ((1n << 24n) - 1n);
-    // Convert to signed 24-bit integer
-    const tick = tickRaw >= (1n << 23n) ? Number(tickRaw - (1n << 24n)) : Number(tickRaw);
-    
-    // Extract protocolFee (24 bits)
-    const protocolFee = Number((slot0BigInt >> 184n) & ((1n << 24n) - 1n));
-    
-    // Extract lpFee (24 bits)
-    const lpFee = Number((slot0BigInt >> 208n) & ((1n << 24n) - 1n));
-    
+    // Uniswap V3 slot0 returns: [sqrtPriceX96, tick, observationIndex, observationCardinality, observationCardinalityNext, feeProtocol, unlocked]
+    const [sqrtPriceX96, tick, , , , feeProtocol] = slot0Data;
     
     // Validate that we got reasonable data
-    if (sqrtPriceX96 === 0n) {
-      console.log("Invalid sqrtPriceX96 (zero), GLOOP/GMI pool might not be initialized");
+    if (!sqrtPriceX96 || sqrtPriceX96 === 0n) {
+      console.log("Invalid sqrtPriceX96 (zero), GLOOP/GMI V3 pool might not be initialized");
       return null;
     }
     
-    // Return in the same format as the original getSlot0 would
-    return [sqrtPriceX96, tick, protocolFee, lpFee];
+    console.log("GLOOP/GMI V3 pool state - sqrtPriceX96:", sqrtPriceX96.toString(), "tick:", tick);
+    
+    // Return in a compatible format: [sqrtPriceX96, tick, feeProtocol, 0]
+    // The last parameter (lpFee) doesn't exist in V3 in the same way, so we pass 0
+    return [sqrtPriceX96, tick, feeProtocol, 0];
     
   } catch (error) {
-    console.error("Failed to fetch GLOOP/GMI Uniswap V4 pool state:", error);
+    console.error("Failed to fetch GLOOP/GMI Uniswap V3 pool state:", error);
     return null;
   }
 };
@@ -355,7 +324,7 @@ export {
   withdraw,
   fetchTotalUnderlying,
   fetchTotalBorrows,
-  getGloopGMIUniswapV4PoolState,
+  getGloopGMIUniswapV3PoolState,
   getGMIUSDCUniswapV4PoolState,
-  getGloopGMIUniswapV4PoolState as getGloopGMIGlobalState // Alias for backward compatibility
+  getGloopGMIUniswapV3PoolState as getGloopGMIGlobalState // Alias for backward compatibility
 };
