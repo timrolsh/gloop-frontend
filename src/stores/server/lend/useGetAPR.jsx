@@ -30,12 +30,28 @@ const useGetAPR = ({rewardTokenAddress, enabled = true}) => {
         return "0";
       }
 
-      // Get GLOOP emissions per second
-      const emissionsPerSecond = await getRewardsData(rewardTokenAddress);
+      // Get GLOOP emissions per second and distribution end time
+      // Returns: [rewardIndex, emissionsPerSecond, distributionEnd, totalSupply]
+      const rewardsData = await getRewardsData(rewardTokenAddress);
 
-      if (!emissionsPerSecond || !Array.isArray(emissionsPerSecond) || emissionsPerSecond.length < 2) {
+      if (!rewardsData || !Array.isArray(rewardsData) || rewardsData.length < 3) {
         return "0";
       }
+
+      // Check if reward distribution has ended
+      // rewardsData[2] is distributionEnd timestamp
+      const distributionEnd = rewardsData[2];
+      // eslint-disable-next-line no-undef
+      const currentTimestamp = BigInt(Math.floor(Date.now() / 1000)); // Current Unix timestamp in seconds
+      
+      if (currentTimestamp > distributionEnd) {
+        // Reward distribution has ended
+        return "0";
+      }
+
+      // Getting values from contracts:
+      // Reward tokens per sec = Emissions per sec = (, uint256 emissionsPerSecond,,) = gmIncentives.getRewardsData(address reward)
+      const emissionsPerSecondValue = rewardsData[1];
 
       // Total Lending pool USDC value = call pool.totalUnderlying(ERC20 asset) with the usdc address
       const totalLendingPoolUSDCValue = await fetchTotalUnderlying(env.USDC_TOKEN_ADDRESS);
@@ -43,10 +59,6 @@ const useGetAPR = ({rewardTokenAddress, enabled = true}) => {
       if (!totalLendingPoolUSDCValue || totalLendingPoolUSDCValue === 0n) {
         return "0";
       }
-
-      // Getting values from contracts:
-      // Reward tokens per sec = Emissions per sec = (, uint256 emissionsPerSecond,,) = gmIncentives.getRewardsData(address reward)
-      const emissionsPerSecondValue = emissionsPerSecond[1];
 
       if (!emissionsPerSecondValue || emissionsPerSecondValue === 0n) {
         return "0";
