@@ -4,7 +4,6 @@ import useUserStore from "~/stores/client/user";
 
 import lendingPoolAbi from "~/consts/abis/LendingPool.json";
 // Use the actual Uniswap V4 PoolManager ABI
-import UniswapV4PoolManagerAbi from "~/consts/abis/UniswapV4PoolManager.json";
 import erc20Abi from "~/consts/abis/MockERC20.json";
 import {Web3Exception} from "~/consts/exceptions";
 import {config} from "~/providers/WalletContextProvider";
@@ -71,10 +70,13 @@ const isAssetEnabled = async (assetAddress) => {
     });
   } catch (error) {
     console.log(error);
-    throw new Web3Exception(`Checking if asset is enabled failed: ${error.shortMessage || "Unknown Reason!"}`, {
-      assetAddress,
-      error
-    });
+    throw new Web3Exception(
+      `Checking if asset is enabled failed: ${error.shortMessage || "Unknown Reason!"}`,
+      {
+        assetAddress,
+        error
+      }
+    );
   }
 };
 
@@ -83,7 +85,6 @@ const deposit = async (amount, token) => {
   const walletAddress = useUserStore.getState().walletAddress;
 
   try {
-
     // First check if we need to approve
     const allowance = await checkAllowance(walletAddress, token);
     if (allowance < amount) {
@@ -211,107 +212,38 @@ const getGloopGMIUniswapV3PoolState = async () => {
   try {
     // Uniswap V3 Pool address for GLOOP/GMI on Arbitrum
     const GLOOP_GMI_V3_POOL_ADDRESS = "0x84ef1190ba2be3fadded470642520b7f8948aded";
-    
+
     // Import Uniswap V3 Pool ABI
-    const UniswapV3PoolAbi = await import('~/consts/abis/UniswapV3Pool.json');
-    
+    const UniswapV3PoolAbi = await import("~/consts/abis/UniswapV3Pool.json");
+
     // Call slot0 directly on the V3 pool
     const slot0Data = await readContract(config, {
       abi: UniswapV3PoolAbi.default,
       address: GLOOP_GMI_V3_POOL_ADDRESS,
       functionName: "slot0"
     });
-    
+
     if (!slot0Data || !Array.isArray(slot0Data)) {
       console.log("No GLOOP/GMI V3 pool data found");
       return null;
     }
-    
+
     // Uniswap V3 slot0 returns: [sqrtPriceX96, tick, observationIndex, observationCardinality, observationCardinalityNext, feeProtocol, unlocked]
     const [sqrtPriceX96, tick, , , , feeProtocol] = slot0Data;
-    
+
     // Validate that we got reasonable data
     if (!sqrtPriceX96 || sqrtPriceX96 === 0n) {
       console.log("Invalid sqrtPriceX96 (zero), GLOOP/GMI V3 pool might not be initialized");
       return null;
     }
-    
+
     console.log("GLOOP/GMI V3 pool state - sqrtPriceX96:", sqrtPriceX96.toString(), "tick:", tick);
-    
+
     // Return in a compatible format: [sqrtPriceX96, tick, feeProtocol, 0]
     // The last parameter (lpFee) doesn't exist in V3 in the same way, so we pass 0
     return [sqrtPriceX96, tick, feeProtocol, 0];
-    
   } catch (error) {
     console.error("Failed to fetch GLOOP/GMI Uniswap V3 pool state:", error);
-    return null;
-  }
-};
-
-const getGMIUSDCUniswapV4PoolState = async () => {
-  try {
-    // Uniswap V4 PoolManager address on Arbitrum
-    const UNISWAP_V4_POOL_MANAGER_ADDRESS = "0x360E68faCcca8cA495c1B759Fd9EEe466db9FB32";
-    
-    const GMI_USDC_POOL_ID = "0xdc56b8b81ba09dc1476233e707b727c515b3489e1e8ca51e264896df23347de1";
-    
-    // StateLibrary constants from the documentation
-    const POOLS_SLOT = 6; // uint256(6)
-    
-    // Calculate the storage slot for pools[poolId].slot0
-    const { keccak256, encodeAbiParameters } = await import('viem');
-    
-    const poolStateSlot = keccak256(
-      encodeAbiParameters(
-        [{ name: 'poolId', type: 'bytes32' }, { name: 'slot', type: 'uint256' }],
-        [GMI_USDC_POOL_ID, POOLS_SLOT]
-      )
-    );
-    
-    
-    // Use extsload to read the slot0 data
-    const slot0Data = await readContract(config, {
-      abi: UniswapV4PoolManagerAbi.abi,
-      address: UNISWAP_V4_POOL_MANAGER_ADDRESS,
-      functionName: "extsload",
-      args: [poolStateSlot]
-    });
-    
-    
-    if (!slot0Data || slot0Data === "0x0000000000000000000000000000000000000000000000000000000000000000") {
-      console.log("No GMI/USDC pool data found in slot0");
-      return null;
-    }
-    
-    // Decode the packed slot0 data
-    // eslint-disable-next-line no-undef
-    const slot0BigInt = BigInt(slot0Data);
-    
-    // Extract sqrtPriceX96 (160 bits, rightmost)
-    const sqrtPriceX96 = slot0BigInt & ((1n << 160n) - 1n);
-    
-    // Extract tick (24 bits, signed)
-    const tickRaw = (slot0BigInt >> 160n) & ((1n << 24n) - 1n);
-    const tick = tickRaw >= (1n << 23n) ? Number(tickRaw - (1n << 24n)) : Number(tickRaw);
-    
-    // Extract protocolFee (24 bits)
-    const protocolFee = Number((slot0BigInt >> 184n) & ((1n << 24n) - 1n));
-    
-    // Extract lpFee (24 bits)
-    const lpFee = Number((slot0BigInt >> 208n) & ((1n << 24n) - 1n));
-    
-    
-    // Validate that we got reasonable data
-    if (sqrtPriceX96 === 0n) {
-      console.log("Invalid sqrtPriceX96 (zero), GMI/USDC pool might not be initialized");
-      return null;
-    }
-    
-    // Return in the same format as the original getSlot0 would
-    return [sqrtPriceX96, tick, protocolFee, lpFee];
-    
-  } catch (error) {
-    console.error("Failed to fetch GMI/USDC Uniswap V4 pool state:", error);
     return null;
   }
 };
@@ -325,6 +257,5 @@ export {
   fetchTotalUnderlying,
   fetchTotalBorrows,
   getGloopGMIUniswapV3PoolState,
-  getGMIUSDCUniswapV4PoolState,
   getGloopGMIUniswapV3PoolState as getGloopGMIGlobalState // Alias for backward compatibility
 };
