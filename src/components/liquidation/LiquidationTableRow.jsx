@@ -12,13 +12,11 @@ import RoundUSDCIcon from "~/assets/img/tokens/roundUSDC.svg";
 import useUserStore from "~/stores/client/user";
 import useGetLiquidationBonus from "~/stores/server/liquidation/useGetLiquidationBonus";
 import useGetUserCollateralValue from "~/stores/server/borrow/useGetTotalCollateral";
-import {useAccount} from "wagmi";
 import LiquidateUserModal from "./LiquidateUserModal";
 
 export default function LiquidationTableRow({position, index, card = false}) {
   // const isUserLiquidableQuery = useGetIsUserLiquidable({ borrowedAsset: position.borrowedAssetAddress, borrowerAddress: position.walletAddress })
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-  const userTokens = useUserStore((state) => state.userTokens);
 
   const liquidationBonusQuery = useGetLiquidationBonus({});
   const userTotalCollateralValueQuery = useGetUserCollateralValue({
@@ -28,6 +26,8 @@ export default function LiquidationTableRow({position, index, card = false}) {
   const [liquidateModalVisible, setLiquidateModalVisible] = useState(false);
 
   const HFColorClass = useMemo(() => {
+    if (!position.healthFactor && position.healthFactor !== 0) return "color-gray";
+    
     const bigRatio = createBigNumber(position.healthFactor.toString());
 
     if (bigRatio.lt(100)) return "color-red";
@@ -39,9 +39,12 @@ export default function LiquidationTableRow({position, index, card = false}) {
   const liquidateButtonDisabledReason = useMemo(() => {
     if (!isAuthenticated()) return "Please Connect Wallet First!";
 
+    if (!position.healthFactor && position.healthFactor !== 0) 
+      return "Health Factor Not Available";
+
     if (createBigNumber(position.healthFactor.toString()).gte(100))
       return "User Is Not Liquidatable";
-  }, [position, userTokens]);
+  }, [position, isAuthenticated]);
 
   const handleLiquidate = () => {
     setLiquidateModalVisible(true);
@@ -97,7 +100,9 @@ export default function LiquidationTableRow({position, index, card = false}) {
           <div className="d-flex justify-content-between">
             <div className="color-gray font-14 bold-300 py-2">Health Factor</div>
             <div className={`${HFColorClass} font-14 bold-600 py-2`}>
-              {truncateAmount(position.healthFactor, 0)}%
+              {position.healthFactor || position.healthFactor === 0 
+                ? `${truncateAmount(position.healthFactor, 0)}%` 
+                : "N/A"}
             </div>
           </div>
 
@@ -154,7 +159,9 @@ export default function LiquidationTableRow({position, index, card = false}) {
           </td>
           {/* <Skeleton loading={healthFactorQuery.isLoading || ratio === env.EMPTY_VALUE}> */}
           <td className={`${HFColorClass} font-16 bold-700`}>
-            {truncateAmount(position.healthFactor, 0)}%
+            {position.healthFactor || position.healthFactor === 0 
+              ? `${truncateAmount(position.healthFactor, 0)}%` 
+              : "N/A"}
           </td>
           {/* </Skeleton> */}
           <Skeleton loading={liquidationBonusQuery.isLoading}>
