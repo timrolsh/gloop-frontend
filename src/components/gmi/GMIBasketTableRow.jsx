@@ -1,5 +1,5 @@
 import env from "~/env";
-import {truncateAmount, getTokenShortName} from "~/utils/ui";
+import {truncateAmount, getTokenShortName, getTokenBracketedPart} from "~/utils/ui";
 import Skeleton from "../Skeleton";
 import {useMemo} from "react";
 import {createBigNumber} from "~/utils/math";
@@ -39,7 +39,12 @@ export default function GMIBasketTableRow({token, card}) {
         <tr className={`py-3 market-list-table-row`}>
           <td className="d-flex gap-3 align-items-center">
             <img src={token.image} width={37} className="mr-8 to_gmi_dropdown_btn" alt={token.name} />
-            <span className="color-white font-16 bold-600">{getTokenShortName(token.name)}</span>
+            <div className="d-flex flex-column">
+              <span className="color-white font-16 bold-600">{getTokenShortName(token.name)}</span>
+              {getTokenBracketedPart(token.name) && (
+                <span className="color-gray font-14">{getTokenBracketedPart(token.name)}</span>
+              )}
+            </div>
           </td>
 
           <td>
@@ -93,9 +98,14 @@ export default function GMIBasketTableRow({token, card}) {
           <div className="d-flex flex-column" style={{gap: "8px"}}>
             <div className="d-flex space-between">
               <div className="color-gray font-14 bold-300  py-2">Asset</div>
-              <div className="py-2">
-                <img src={token.image} width={22} className="mr-10" alt={token.name} />
-                <span className="color-white font-14 bold-700 ">{getTokenShortName(token.name)}</span>
+              <div className="py-2 d-flex align-items-center" style={{gap: "8px"}}>
+                <img src={token.image} width={22} alt={token.name} />
+                <div className="d-flex flex-column">
+                  <span className="color-white font-14 bold-700">{getTokenShortName(token.name)}</span>
+                  {getTokenBracketedPart(token.name) && (
+                    <span className="color-gray font-12">{getTokenBracketedPart(token.name)}</span>
+                  )}
+                </div>
               </div>
             </div>
 
